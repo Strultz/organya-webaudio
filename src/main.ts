@@ -94,8 +94,7 @@ await (async () => {
   register("101",  73, 3)
   register("102",  78, 2)
   register("103",  80, 2)
-  register("104", 116, 1)
-  register("104",  81, 1)
+  register("104", 116, 1) // This sound was originally defined twice
   register("105",  82, 1) // Woof!
   register("106",  83, 2)
   register("107",  85, 1)
@@ -119,6 +118,7 @@ await (async () => {
   register("X21",  21, 2) // Sounds similar to 053.
   register("X40",  40, 1)
   register("X67",  67, 1)
+  register("X81",  81, 1)
 })()
 
 for (const keys of sfxSamples.keys()) {
