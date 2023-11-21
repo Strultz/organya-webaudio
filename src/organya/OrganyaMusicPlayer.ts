@@ -247,17 +247,20 @@ export class OrganyaMusicPlayer {
     // Clear previously scheduled sounds that have already ended.
     const contextTime = this.#context.currentTime
     for (const channel of this.#channels) {
+      const track = channel.track
+      if (track == undefined) {
+        continue
+      }
       // Because notes are always processed in order, 'channel.scheduledSounds' is naturally always sorted by start
       // time in ascending order, so we only need to find the first not ended (melody) or not started (percussion)
       // sound and clear everything in the array that comes before it.
-      //if (channel.type === "melody") {
-      let firstNotEndedSoundIndex = channel.scheduledSounds.findIndex(s => s.endTime > contextTime)
-      if (firstNotEndedSoundIndex === -1) {
-        firstNotEndedSoundIndex = channel.scheduledSounds.length // Clear the entire array.
-      }
-      channel.scheduledSounds.splice(0, firstNotEndedSoundIndex)
-      //} else {
-      if (channel.type !== "melody") {
+      if (channel.type === "melody" && !track.pipi) {
+        let firstNotEndedSoundIndex = channel.scheduledSounds.findIndex(s => s.endTime > contextTime)
+        if (firstNotEndedSoundIndex === -1) {
+          firstNotEndedSoundIndex = channel.scheduledSounds.length // Clear the entire array.
+        }
+        channel.scheduledSounds.splice(0, firstNotEndedSoundIndex)
+      } else {
         let firstNotStartedSoundIndex = channel.scheduledSounds.findIndex(s => s.startTime > contextTime)
         if (firstNotStartedSoundIndex === -1) {
           firstNotStartedSoundIndex = channel.scheduledSounds.length // Clear the entire array.
@@ -343,10 +346,9 @@ export class OrganyaMusicPlayer {
               let endTime
               let endStep
               if (track.pipi) {
-                endTime = startTime + 1 * stepDurationSeconds
-                endStep = this.#schedulerStep + 1
+                endTime = startTime
+                endStep = this.#schedulerStep
                 soundNode.loop = false
-                soundNode.stop(endTime)
               } else {
                 endTime = getEndTime(soundNode, startTime, note.duration, stepDurationSeconds)
                 endStep = this.#schedulerStep + note.duration
