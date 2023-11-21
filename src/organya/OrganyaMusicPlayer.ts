@@ -317,7 +317,7 @@ export class OrganyaMusicPlayer {
                 // Stop any previous sound that would have played past the current step.
                 const previousSound = channel.scheduledSounds[channel.scheduledSounds.length - 1]!
                 if (track.pipi) {
-                  previousSound.stop(startTime)
+                  previousSound.soundNode.stop(startTime)
                 } else {
                   if (previousSound.endStep > this.#schedulerStep) {
                     previousSound.endTime = getEndTime(
@@ -362,7 +362,7 @@ export class OrganyaMusicPlayer {
             if (channel.scheduledSounds.length > 0) {
               // Stop any previous sound that would have played past the current step.
               const previousSound = channel.scheduledSounds[channel.scheduledSounds.length - 1]!
-              previousSound.stop(startTime)
+              previousSound.soundNode.stop(startTime)
             }
             const soundNode = this.#context.createBufferSource()
             soundNode.connect(channel.volumeNode)
@@ -376,7 +376,7 @@ export class OrganyaMusicPlayer {
             soundNode.start(startTime)
             soundNode.loop = false
 
-            channel.scheduledSounds.push({ soundNode, startTime, endTime, startStep: this.#schedulerStep, endStep })
+            channel.scheduledSounds.push({ soundNode, startTime })
           }
         }
 
