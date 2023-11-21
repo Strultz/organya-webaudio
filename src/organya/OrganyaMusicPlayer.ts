@@ -351,6 +351,12 @@ export class OrganyaMusicPlayer {
               channel.scheduledSounds.push({ soundNode, startTime, endTime, startStep: this.#schedulerStep, endStep })
             }
           } else if (channel.audioBuffer != undefined) {
+            if (channel.scheduledSounds.length > 0) {
+                // Stop any previous sound that would have played past the current step.
+                const previousSound = channel.scheduledSounds[channel.scheduledSounds.length - 1]!
+                previousSound.soundNode.stop()
+            }
+            
             const soundNode = this.#context.createBufferSource()
             soundNode.connect(channel.volumeNode)
             soundNode.buffer = channel.audioBuffer
