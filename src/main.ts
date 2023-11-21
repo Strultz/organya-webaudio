@@ -118,7 +118,6 @@ await (async () => {
   register("X21",  21, 2) // Sounds similar to 053.
   register("X40",  40, 1)
   register("X67",  67, 1)
-  register("X81",  81, 1)
 })()
 
 for (const keys of sfxSamples.keys()) {
