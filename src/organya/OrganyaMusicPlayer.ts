@@ -308,23 +308,27 @@ export class OrganyaMusicPlayer {
         const startTime = this.#contextTimeOffset + this.#schedulerStep * stepDurationSeconds
 
         if (note.pitch !== IGNORED_NOTE_PROPERTY) {
-          if (channel.scheduledSounds.length > 0) {
-            // Stop any previous sound that would have played past the current step.
-            const previousSound = channel.scheduledSounds[channel.scheduledSounds.length - 1]!
-            if (previousSound.endStep > this.#schedulerStep) {
-              previousSound.endTime = getEndTime(
-                previousSound.soundNode,
-                previousSound.startTime,
-                this.#schedulerStep - previousSound.startStep,
-                stepDurationSeconds,
-              )
-              previousSound.endStep = this.#schedulerStep
-              previousSound.soundNode.stop(previousSound.endTime)
-            }
-          }
-          
           if (channel.type === "melody") {
             if (channel.audioBuffersByOctave != undefined) {
+              if (channel.scheduledSounds.length > 0) {
+                // Stop any previous sound that would have played past the current step.
+                const previousSound = channel.scheduledSounds[channel.scheduledSounds.length - 1]!
+                if (track.pipi) {
+                  previousSound.stop(startTime)
+                } else {
+                  if (previousSound.endStep > this.#schedulerStep) {
+                    previousSound.endTime = getEndTime(
+                      previousSound.soundNode,
+                      previousSound.startTime,
+                      this.#schedulerStep - previousSound.startStep,
+                      stepDurationSeconds,
+                    )
+                    previousSound.endStep = this.#schedulerStep
+                    previousSound.soundNode.stop(previousSound.endTime)
+                  }
+                }
+              }
+              
               const soundNode = this.#context.createBufferSource()
               soundNode.connect(channel.volumeNode)
               const octave = ~~(note.pitch / MELODY_PITCH_CLASS_COUNT)
@@ -339,16 +343,8 @@ export class OrganyaMusicPlayer {
               let endTime
               let endStep
               if (track.pipi) {
-                let nextStart = channel.repeatEndNoteIndex
-                for (let i = channel.nextNoteIndex + 1; i < channel.repeatEndNoteIndex; ++i) {
-                  const nextNote = track.notes[i]
-                  if (nextNote == undefined) continue
-                  nextStart = nextNote.start
-                  break
-                }
-                const length = nextStart - note.start
-                endTime = startTime + length * stepDurationSeconds
-                endStep = this.#schedulerStep + length
+                endTime = startTime + 1 * stepDurationSeconds
+                endStep = this.#schedulerStep + 1
                 soundNode.loop = false
                 soundNode.stop(endTime)
               } else {
@@ -361,6 +357,11 @@ export class OrganyaMusicPlayer {
               channel.scheduledSounds.push({ soundNode, startTime, endTime, startStep: this.#schedulerStep, endStep })
             }
           } else if (channel.audioBuffer != undefined) {
+            if (channel.scheduledSounds.length > 0) {
+              // Stop any previous sound that would have played past the current step.
+              const previousSound = channel.scheduledSounds[channel.scheduledSounds.length - 1]!
+              previousSound.stop(startTime)
+            }
             const soundNode = this.#context.createBufferSource()
             soundNode.connect(channel.volumeNode)
             soundNode.buffer = channel.audioBuffer
@@ -371,18 +372,7 @@ export class OrganyaMusicPlayer {
             )
 
             soundNode.start(startTime)
-            let nextStart = channel.repeatEndNoteIndex
-            for (let i = channel.nextNoteIndex + 1; i < channel.repeatEndNoteIndex; ++i) {
-              const nextNote = track.notes[i]
-              if (nextNote == undefined) continue
-              nextStart = nextNote.start
-              break
-            }
-            const length = nextStart - note.start
-            const endTime = startTime + length * stepDurationSeconds
-            const endStep = this.#schedulerStep + length
             soundNode.loop = false
-            soundNode.stop(endTime)
 
             channel.scheduledSounds.push({ soundNode, startTime, endTime, startStep: this.#schedulerStep, endStep })
           }
@@ -582,7 +572,4 @@ interface ScheduledMelodySound extends ScheduledSoundBase {
 }
 
 interface ScheduledPercussionSound extends ScheduledSoundBase {
-    endTime: number
-    readonly startStep: number
-    endStep: number
 }
