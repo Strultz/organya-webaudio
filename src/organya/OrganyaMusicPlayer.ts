@@ -339,14 +339,16 @@ export class OrganyaMusicPlayer {
               let endTime
               let endStep
               if (track.pipi) {
+                let nextStart = note.start
                 for (let i = channel.nextNoteIndex + 1; i < channel.repeatEndNoteIndex; ++i) {
                   const nextNote = track.notes[i]
                   if (nextNote == undefined) continue
-                  const length = nextNote.start - note.start
-                  endTime = getEndTime(soundNode, startTime, note.duration, stepDurationSeconds)
-                  endStep = this.#schedulerStep + length
+                  nextStart = nextNote.start
                   break
                 }
+                const length = nextStart - note.start
+                endTime = getEndTime(soundNode, startTime, length, stepDurationSeconds)
+                endStep = this.#schedulerStep + length
                 soundNode.loop = false
                 soundNode.stop(endTime)
               } else {
@@ -369,16 +371,16 @@ export class OrganyaMusicPlayer {
             )
 
             soundNode.start(startTime)
-            let endTime
-            let endStep
+            let nextStart = note.start
             for (let i = channel.nextNoteIndex + 1; i < channel.repeatEndNoteIndex; ++i) {
               const nextNote = track.notes[i]
               if (nextNote == undefined) continue
-              const length = nextNote.start - note.start
-              endTime = getEndTime(soundNode, startTime, note.duration, stepDurationSeconds)
-              endStep = this.#schedulerStep + length
+              nextStart = nextNote.start
               break
             }
+            const length = nextStart - note.start
+            const endTime = getEndTime(soundNode, startTime, length, stepDurationSeconds)
+            const endStep = this.#schedulerStep + length
             soundNode.loop = false
             soundNode.stop(endTime)
 
