@@ -580,4 +580,7 @@ interface ScheduledMelodySound extends ScheduledSoundBase {
 }
 
 interface ScheduledPercussionSound extends ScheduledSoundBase {
+    endTime: number
+    readonly startStep: number
+    endStep: number
 }
