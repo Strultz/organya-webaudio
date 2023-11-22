@@ -229,17 +229,61 @@ const percussionNames = [
 ]
 
 //await (async () => {
-async function loadWav(name: string): Promise<AudioBuffer> {
-  const res = await fetch(new URL(`./data/WAVE/${name}`, import.meta.url))
+function loadWav(name: string): AudioBuffer {
+  const res = await (async () => fetch(new URL(`./data/WAVE/${name}`, import.meta.url)))()
   if (!res.ok) {
     document.body.innerHTML = name
     throw new Error("Failed to fetch percussion waveform data.")
   }
-  return audioContext.value.decodeAudioData(await res.arrayBuffer())
+  const buf = await (async () => res.arrayBuffer())()
+  const view = new DataView(buf)
+  const i8a = new Int8Array(buf)
+  let i = 0
+  if (view.getUint32(i, true) == 0x45564157) {
+    i += 4;
+    const riffId = view.getUint32(i, true); i += 4
+    const riffLen = view.getUint32(i, true); i += 4
+    if (riffId != 0x20746d66) {
+      console.error("Invalid RIFF chunk ID.")
+      return undefined
+    }
+
+    const startPos = i
+    const aFormat = view.getUint16(i, true); i += 2
+    if (aFormat != 1) {
+      console.error("Invalid audio format.")
+      i = startPos + riffLen
+      return undefined
+    }
+
+    const channels = view.getUint16(i, true); i += 2
+    const samples = view.getUint32(i, true); i += 10 // skip
+    const bits = view.getUint16(i, true); i += 2
+    const wavData = view.getUint32(i, true); i += 4
+    const wavLen = view.getUint32(i, true); i += 4
+
+    if (wavData != 0x61746164) {
+      i = startPos + riffLen
+      return undefined
+    }
+
+    i += wavLen
+    
+    const audioBuffer = new AudioBuffer({ numberOfChannels: channels, length: (i8a.length - i) / channels, sampleRate: samples })
+    for (let j = 0; j < i8a.length - i; j += channels) {
+      for (let k = 0; k < channels; k++) {
+        const channelBuffer = audioBuffer.getChannelData(k)
+        channelBuffer[j] = (i8a[i + j + k]! - 128) / 128
+      }
+    }
+    return audioBuffer
+  }
+  return undefined
+  // return audioContext.value.decodeAudioData()
 }
 
 for (let i = 0; i < percussionNames.length; i++) {
-  percussionSamples[i] = await loadWav(percussionNames[i]!);
+  percussionSamples[i] = loadWav(percussionNames[i]!);
 }
 //})()
 
