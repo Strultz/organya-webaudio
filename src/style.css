@@ -60,12 +60,8 @@ main {
   min-width: 24rem;
 }
 
-.sfx-controls {
-  align-self: flex-start;
-}
-
 .music-controls {
-  align-self: flex-end;
+  align-self: flex-center;
 }
 
 .sound-test-controls fieldset {
