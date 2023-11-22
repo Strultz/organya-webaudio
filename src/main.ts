@@ -248,14 +248,14 @@ async function loadWav(name: string): Promise<AudioBuffer | undefined> {
     return undefined
   }
 
-  const riffId = view.getUint32(i, true); i += 4
-  const riffLen = view.getUint32(i, true); i += 4
+  const riffId = view.getUint32(i, true); i += 8 // skip
+  //const riffLen = view.getUint32(i, true); i += 4
   if (riffId != 0x20746d66) { // 'fmt '
     throw new Error("Invalid RIFF chunk ID.")
     // return undefined
   }
 
-  const startPos = i
+  //const startPos = i
   const aFormat = view.getUint16(i, true); i += 2
   if (aFormat != 1) {
     throw new Error("Invalid audio format.")
