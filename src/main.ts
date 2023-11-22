@@ -228,19 +228,19 @@ const percussionNames = [
 "HICLOSE05",
 ]
 
-await (async () => {
-  async function loadWav(name: string): Promise<AudioBuffer> {
-    const res = await fetch(new URL(`./data/WAVE/${name}`, import.meta.url))
-    if (!res.ok) {
-      throw new Error("Failed to fetch percussion waveform data.")
-    }
-    return audioContext.value.decodeAudioData(await res.arrayBuffer())
+//await (async () => {
+async function loadWav(name: string): Promise<AudioBuffer> {
+  const res = await fetch(new URL(`./data/WAVE/${name}`, import.meta.url))
+  if (!res.ok) {
+    throw new Error("Failed to fetch percussion waveform data.")
   }
+  return audioContext.value.decodeAudioData(await res.arrayBuffer())
+}
 
-  for (let i = 0; i < percussionNames.length; i++) {
-    percussionSamples[index] = await loadWav(percussionNames[i]!);
-  }
-})()
+for (let i = 0; i < percussionNames.length; i++) {
+  percussionSamples[i] = await loadWav(percussionNames[i]!);
+}
+//})()
 
 /*const percussionSamples = [
   sfxSamples.get("150"),
