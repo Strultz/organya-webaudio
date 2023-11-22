@@ -258,7 +258,7 @@ async function loadWav(name: string): Promise<AudioBuffer | undefined> {
 
     const channels = view.getUint16(i, true); i += 2
     const samples = view.getUint32(i, true); i += 10 // skip
-    const bits = view.getUint16(i, true); i += 2
+    //const bits = view.getUint16(i, true); i += 2
     const wavData = view.getUint32(i, true); i += 4
     const wavLen = view.getUint32(i, true); i += 4
 
