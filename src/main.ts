@@ -239,47 +239,50 @@ async function loadWav(name: string): Promise<AudioBuffer | undefined> {
   const view = new DataView(buf)
   const i8a = new Int8Array(buf)
   let i = 0
-  if (view.getUint32(i, true) == 0x45564157) {
-    i += 4;
-    const riffId = view.getUint32(i, true); i += 4
-    const riffLen = view.getUint32(i, true); i += 4
-    if (riffId != 0x20746d66) {
-      throw new Error("Invalid RIFF chunk ID.")
-    //  return undefined
-    }
-
-    const startPos = i
-    const aFormat = view.getUint16(i, true); i += 2
-    if (aFormat != 1) {
-      throw new Error("Invalid audio format.")
-      //i = startPos + riffLen
-   //   return undefined
-    }
-
-    const channels = view.getUint16(i, true); i += 2
-    const samples = view.getUint32(i, true); i += 10 // skip
-    const bits = view.getUint16(i, true); i += 2
-    const wavData = view.getUint32(i, true); i += 4
-    const wavLen = view.getUint32(i, true); i += 4
-
-    if (wavData != 0x61746164) {
-      i = startPos + riffLen
-      return undefined
-    }
-
-    i += wavLen
-    
-    const mdb = ((2 ** bits) / 2) | 0
-    const audioBuffer = new AudioBuffer({ numberOfChannels: channels, length: (i8a.length - i) / channels, sampleRate: samples })
-    for (let j = 0; j < i8a.length - i; j += channels) {
-      for (let k = 0; k < channels; k++) {
-        const channelBuffer = audioBuffer.getChannelData(k)
-        channelBuffer[j] = (i8a[i + j + k]! - mdb) / mdb
-      }
-    }
-    return audioBuffer
+  const hdr = view.getUint32(i, true); i += 8 // skip
+  if (hr != 0x46464952) { // 'RIFF'
+    return undefined
   }
-  return undefined
+  const rft = view.getUint32(i, true); i += 4
+  if (hr != 0x45564157) { // 'WAVE'
+    return undefined
+  }
+
+  const riffId = view.getUint32(i, true); i += 4
+  const riffLen = view.getUint32(i, true); i += 4
+  if (riffId != 0x20746d66) { // 'fmt '
+    throw new Error("Invalid RIFF chunk ID.")
+    // return undefined
+  }
+
+  const startPos = i
+  const aFormat = view.getUint16(i, true); i += 2
+  if (aFormat != 1) {
+    throw new Error("Invalid audio format.")
+    //return undefined
+  }
+
+  const channels = view.getUint16(i, true); i += 2
+  const samples = view.getUint32(i, true); i += 10 // skip
+  const bits = view.getUint16(i, true); i += 2
+  const wavData = view.getUint32(i, true); i += 4
+  const wavLen = view.getUint32(i, true); i += 4
+
+  if (wavData != 0x61746164) { // 'data'
+    return undefined
+  }
+
+  i += wavLen
+    
+  const mdb = ((2 ** bits) / 2) | 0
+  const audioBuffer = new AudioBuffer({ numberOfChannels: channels, length: (i8a.length - i) / channels, sampleRate: samples })
+  for (let j = 0; j < i8a.length - i; j += channels) {
+    for (let k = 0; k < channels; k++) {
+      const channelBuffer = audioBuffer.getChannelData(k)
+      channelBuffer[j] = (i8a[i + j + k]! - mdb) / mdb
+    }
+  }
+  return audioBuffer
   // return audioContext.value.decodeAudioData()
 }
 
