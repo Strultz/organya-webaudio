@@ -240,8 +240,6 @@ async function loadWav(name: string): Promise<AudioBuffer> {
 
 for (let i = 0; i < percussionNames.length; i++) {
   percussionSamples[i] = await loadWav(percussionNames[i]!);
-  const ztra = percussionSamples[i]!.sampleRate
-  throw new Error(`these ${ztra}`);
 }
 //})()
 
