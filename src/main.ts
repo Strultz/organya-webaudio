@@ -229,13 +229,13 @@ const percussionNames = [
 ]
 
 //await (async () => {
-function loadWav(name: string): AudioBuffer {
-  const res = await (async () => fetch(new URL(`./data/WAVE/${name}`, import.meta.url)))()
+async function loadWav(name: string): Promise<AudioBuffer | undefined> {
+  const res = await fetch(new URL(`./data/WAVE/${name}`, import.meta.url))
   if (!res.ok) {
     document.body.innerHTML = name
     throw new Error("Failed to fetch percussion waveform data.")
   }
-  const buf = await (async () => res.arrayBuffer())()
+  const buf = await res.arrayBuffer()
   const view = new DataView(buf)
   const i8a = new Int8Array(buf)
   let i = 0
@@ -283,7 +283,7 @@ function loadWav(name: string): AudioBuffer {
 }
 
 for (let i = 0; i < percussionNames.length; i++) {
-  percussionSamples[i] = loadWav(percussionNames[i]!);
+  percussionSamples[i] = await loadWav(percussionNames[i]!);
 }
 //})()
 
