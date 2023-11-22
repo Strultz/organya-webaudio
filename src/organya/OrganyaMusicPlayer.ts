@@ -461,9 +461,9 @@ function getSamplesPerSecondPercussion(notePitch: number): number {
   return 800 * notePitch + 100
 }
 
-function samplesPerSecondToPlaybackRate(samplesPerSecond: number, sampleRate: number): number {
+/*function samplesPerSecondToPlaybackRate(samplesPerSecond: number, sampleRate: number): number {
   return 22050 * samplesPerSecond / sampleRate ** 2
-}
+}*/
 
 // 'noteVolumeToMillibels' and 'notePanToMillibels' have been adjusted and simplified slightly and are not 100%
 // accurate to the LUT-based implementation used by the original (but should be virtually indistiguishable).
