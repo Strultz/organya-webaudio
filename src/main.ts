@@ -241,24 +241,24 @@ async function loadWav(name: string): Promise<AudioBuffer | undefined> {
   let i = 0
   const riffc = view.getUint32(i, true); i += 8 // skip
   if (riffc != 0x46464952) { // 'RIFF'
-    return undefined
+    throw new Error("Invalid RIFF")
   }
   const wavec = view.getUint32(i, true); i += 4
   if (wavec != 0x45564157) { // 'WAVE'
-    return undefined
+    throw new Error("Invalid WAVE")
   }
 
   const riffId = view.getUint32(i, true); i += 8 // skip
   //const riffLen = view.getUint32(i, true); i += 4
   if (riffId != 0x20746d66) { // 'fmt '
-    throw new Error("Invalid RIFF chunk ID.")
+    throw new Error("Invalid fmt ")
     // return undefined
   }
 
   //const startPos = i
   const aFormat = view.getUint16(i, true); i += 2
   if (aFormat != 1) {
-    throw new Error("Invalid audio format.")
+    throw new Error("Invalid format")
     //return undefined
   }
 
@@ -269,7 +269,7 @@ async function loadWav(name: string): Promise<AudioBuffer | undefined> {
   const wavLen = view.getUint32(i, true); i += 4
 
   if (wavData != 0x61746164) { // 'data'
-    return undefined
+    throw new Error("Invalid data")
   }
     
   const mdb = ((2 ** bits) / 2) | 0
@@ -277,7 +277,7 @@ async function loadWav(name: string): Promise<AudioBuffer | undefined> {
   for (let j = 0; j < wavLen; j += channels) {
     for (let k = 0; k < channels; k++) {
       const channelBuffer = audioBuffer.getChannelData(k)
-      channelBuffer[j] = (i8a[i + j + k]! - mdb) / mdb
+      channelBuffer[j / channels] = (i8a[i + j + k]! - mdb) / mdb
     }
   }
   return audioBuffer
