@@ -229,17 +229,16 @@ const percussionNames = [
 ]
 
 await (async () => {
-  async function register(index: number, name: string): void {
+  async function loadWav(name: string): Promise<AudioBuffer> {
     const res = await fetch(new URL(`./data/WAVE/${name}`, import.meta.url))
     if (!res.ok) {
       throw new Error("Failed to fetch percussion waveform data.")
     }
-    const arb = await res.arrayBuffer();
-    return audioContext.value.decodeAudioData(arb)
+    return audioContext.value.decodeAudioData(await res.arrayBuffer())
   }
 
   for (let i = 0; i < percussionNames.length; i++) {
-    percussionSamples[index] = await register(i, percussionNames[i]!);
+    percussionSamples[index] = await loadWav(percussionNames[i]!);
   }
 })()
 
