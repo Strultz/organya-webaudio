@@ -171,6 +171,75 @@ const melodyWaveformData = await (async () => {
   }
 
   return await res.arrayBuffer()
+})
+
+const percussionSamples = (AudioBuffer | undefined)[]
+
+const percussionNames = [
+  "BASS01",
+"BASS02",
+"SNARE01",
+"SNARE02",
+"TOM01", 
+
+"HICLOSE",
+"HIOPEN",
+"CRASH",
+"PER01",
+"PER02", 
+
+"BASS03",
+"TOM02",
+"BASS04",
+"BASS05",
+"SNARE03", 
+
+"SNARE04",
+"HICLOSE02",
+"HIOPEN02",
+"HICLOSE03",
+"HIOPEN03", 
+
+"CRASH02",
+"REVSYM01",
+"RIDE01",
+"TOM03",
+"TOM04", 
+
+"ORCDRM01",
+"BELL",
+"CAT" ,
+"BASS06",
+"BASS07", 
+
+"SNARE05",
+"SNARE06",
+"SNARE07",
+"TOM05",
+"HIOPEN04", 
+
+"HICLOSE04",
+"CLAP01",
+"PESI01",
+"QUICK01",
+"BASS08" , 
+
+"SNARE08",
+"HICLOSE05",
+]
+
+await (async () => {
+  function register(index: number, name: string): void {
+    const res = await fetch(new URL(`./data/WAVE/${name}`, import.meta.url))
+    if (!res.ok) {
+      throw new Error("Failed to fetch percussion waveform data.")
+    }
+    percussionSamples[index] = await audioContext.decodeAudioData(await res.arrayBuffer())
+  }
+
+  for (let i = 0; i < percussionNames.length; i++) {
+    register(i, percussionNames[i]);
+  }
 })()
 
 /*const percussionSamples = [
@@ -183,7 +252,7 @@ const melodyWaveformData = await (async () => {
 ]*/
 
 const musicPlayer = new Lazy<OrganyaMusicPlayer>(() => {
-  const musicPlayer = new OrganyaMusicPlayer(audioContext.value, melodyWaveformData)
+  const musicPlayer = new OrganyaMusicPlayer(audioContext.value, melodyWaveformData, percussionSamples)
 
   const gainNode = audioContext.value.createGain()
   gainNode.gain.value = .75
