@@ -232,6 +232,7 @@ const percussionNames = [
 async function loadWav(name: string): Promise<AudioBuffer> {
   const res = await fetch(new URL(`./data/WAVE/${name}`, import.meta.url))
   if (!res.ok) {
+    alert(name)
     throw new Error("Failed to fetch percussion waveform data.")
   }
   return audioContext.value.decodeAudioData(await res.arrayBuffer())
