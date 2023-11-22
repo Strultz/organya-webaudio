@@ -152,7 +152,7 @@ const songKeys = [
   'ACCESS', 'ANZEN', 'BALCONY', 'BALLOS', 'BDOWN', 'CEMETERY', 'CURLY', 'DR', 'ENDING', 'ESCAPE', 'FANFALE1',
   'FANFALE2', 'FANFALE3', 'FIREEYE', 'GAMEOVER', 'GINSUKE', 'GRAND', 'GRAVITY', 'HELL', 'IRONH', 'JENKA', 'JENKA2',
   'KODOU', 'LASTBT3', 'LASTBTL', 'LASTCAVE', 'MARINE', 'MAZE', 'MDOWN2', 'MURA', 'OSIDE', 'PLANT', 'QUIET', 'REQUIEM',
-  'TOROKO', 'VIVI', 'WANPAK2', 'WANPAKU', 'WEED', 'WHITE', 'XXXX', 'ZONBIE', 'Org3BetaCurly.org',
+  'TOROKO', 'VIVI', 'WANPAK2', 'WANPAKU', 'WEED', 'WHITE', 'XXXX', 'ZONBIE', 'Org3BetaCurly.org', 'Org3BetaLeef.org',
 ]
 for (const key of songKeys) {
   const option = document.createElement("option")
