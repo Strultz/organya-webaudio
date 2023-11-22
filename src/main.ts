@@ -237,7 +237,7 @@ async function loadWav(name: string): Promise<AudioBuffer | undefined> {
   }
   const buf = await res.arrayBuffer()
   const view = new DataView(buf)
-  const i8a = new UInt8Array(buf)
+  const i8a = new Uint8Array(buf)
   let i = 0
   const riffc = view.getUint32(i, true); i += 8 // skip
   if (riffc != 0x46464952) { // 'RIFF'
