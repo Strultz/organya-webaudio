@@ -174,17 +174,16 @@ const musicPlayer = new Lazy<OrganyaMusicPlayer>(() => {
 //const songCache = new Map<string, OrganyaSong>()
 
 function setSelectedSong(): void {
-  const selectedSongFile = musicOptions.files[0]
+  const selectedSongFile = musicOptions.files![0]
   //let song = songCache.get(selectedSongKey)
   //if (song == undefined) {
-  const reader = new FileReader();
-  reader.readAsArrayBuffer(selectedSongFile);
+  const reader = new FileReader()
   reader.onload = function() {
     /*const res = await fetch(new URL(`./data/ORG/${selectedSongKey}`, import.meta.url))
     if (!res.ok) {
       throw new Error("Failed to fetch Organya song.")
     }*/
-    song = readOrganyaSong(reader.result as ArrayBuffer, (level, message) => {
+    const song = readOrganyaSong(reader.result as ArrayBuffer, (level, message) => {
       if (level === "warning") {
         console.warn(message)
       } else {
@@ -201,6 +200,7 @@ function setSelectedSong(): void {
       musicPlayer.value.song = song
     }
   }
+  reader.readAsArrayBuffer(selectedSongFile!)
 }
 
 musicOptions.addEventListener("change", setSelectedSong)
