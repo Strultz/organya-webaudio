@@ -11,7 +11,7 @@ const musicControlsTemplate = document.getElementById("music-controls-template")
 const musicControlsClone = musicControlsTemplate.content.cloneNode(true) as DocumentFragment
 const musicControls = musicControlsClone.firstElementChild as HTMLFormElement
 const musicStatus = musicControls.querySelector<HTMLSpanElement>(".status")!
-const musicOptions = musicControls.querySelector<HTMLSelectElement>(".options")!
+const musicOptions = musicControls.querySelector<HTMLInputElement>(".options")!
 const musicStop = musicControls.querySelector<HTMLInputElement>(".stop")!
 
 const melodyWaveformData = await (async () => {
@@ -171,7 +171,7 @@ const musicPlayer = new Lazy<OrganyaMusicPlayer>(() => {
   return musicPlayer
 })
 
-const songCache = new Map<string, OrganyaSong>()
+//const songCache = new Map<string, OrganyaSong>()
 
 function setSelectedSong(): void {
   const selectedSongFile = musicOptions.files[0]
@@ -184,7 +184,7 @@ function setSelectedSong(): void {
     if (!res.ok) {
       throw new Error("Failed to fetch Organya song.")
     }*/
-    song = readOrganyaSong(reader.result, (level, message) => {
+    song = readOrganyaSong(reader.result as ArrayBuffer, (level, message) => {
       if (level === "warning") {
         console.warn(message)
       } else {
