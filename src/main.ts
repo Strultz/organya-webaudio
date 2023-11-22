@@ -241,35 +241,35 @@ async function loadWav(name: string): Promise<AudioBuffer | undefined> {
   let i = 0
   const riffc = view.getUint32(i, true); i += 8 // skip
   if (riffc != 0x46464952) { // 'RIFF'
-    throw new Error("Invalid RIFF")
+    throw new Error(`Invalid RIFF ${name}`)
   }
   const wavec = view.getUint32(i, true); i += 4
   if (wavec != 0x45564157) { // 'WAVE'
-    throw new Error("Invalid WAVE")
+    throw new Error(`Invalid WAVE ${name}`)
   }
 
   const riffId = view.getUint32(i, true); i += 8 // skip
   //const riffLen = view.getUint32(i, true); i += 4
   if (riffId != 0x20746d66) { // 'fmt '
-    throw new Error("Invalid fmt ")
+    throw new Error(`Invalid fmt  ${name}`)
     // return undefined
   }
 
   //const startPos = i
   const aFormat = view.getUint16(i, true); i += 2
   if (aFormat != 1) {
-    throw new Error("Invalid format")
+    throw new Error(`Invalid format ${name}`)
     //return undefined
   }
 
   const channels = view.getUint16(i, true); i += 2
   const samples = view.getUint32(i, true); i += 10 // skip
-  const bits = view.getUint16(i, true); i += 4 // skip
+  const bits = view.getUint16(i, true); i += 2
   const wavData = view.getUint32(i, true); i += 4
   const wavLen = view.getUint32(i, true); i += 4
 
   if (wavData != 0x61746164) { // 'data'
-    throw new Error("Invalid data")
+    throw new Error(`Invalid data ${name}`)
   }
     
   const mdb = ((2 ** bits) / 2) | 0
