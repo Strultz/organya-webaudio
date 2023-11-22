@@ -266,15 +266,15 @@ async function loadWav(name: string): Promise<AudioBuffer | undefined> {
   const samples = view.getUint32(i, true); i += 10 // skip
   const bits = view.getUint16(i, true); i += 2
   const wavData = view.getUint32(i, true); i += 4
-  /*const wavLen = view.getUint32(i, true);*/ i += 4
+  const wavLen = view.getUint32(i, true); i += 4
 
   if (wavData != 0x61746164) { // 'data'
     return undefined
   }
     
   const mdb = ((2 ** bits) / 2) | 0
-  const audioBuffer = new AudioBuffer({ numberOfChannels: channels, length: (i8a.length - i) / channels, sampleRate: samples })
-  for (let j = 0; j < i8a.length - i; j += channels) {
+  const audioBuffer = new AudioBuffer({ numberOfChannels: channels, length: wavLen / channels, sampleRate: samples })
+  for (let j = 0; j < wavLen; j += channels) {
     for (let k = 0; k < channels; k++) {
       const channelBuffer = audioBuffer.getChannelData(k)
       channelBuffer[j] = (i8a[i + j + k]! - mdb) / mdb
