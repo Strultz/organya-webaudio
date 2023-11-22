@@ -153,6 +153,7 @@ const songKeys = [
   'FANFALE2', 'FANFALE3', 'FIREEYE', 'GAMEOVER', 'GINSUKE', 'GRAND', 'GRAVITY', 'HELL', 'IRONH', 'JENKA', 'JENKA2',
   'KODOU', 'LASTBT3', 'LASTBTL', 'LASTCAVE', 'MARINE', 'MAZE', 'MDOWN2', 'MURA', 'OSIDE', 'PLANT', 'QUIET', 'REQUIEM',
   'TOROKO', 'VIVI', 'WANPAK2', 'WANPAKU', 'WEED', 'WHITE', 'XXXX', 'ZONBIE', 'Org3BetaCurly.org', 'Org3BetaLeef.org',
+  '2dbro hidef.org',
 ]
 for (const key of songKeys) {
   const option = document.createElement("option")
