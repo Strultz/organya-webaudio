@@ -171,7 +171,7 @@ const melodyWaveformData = await (async () => {
   }
 
   return await res.arrayBuffer()
-})
+})()
 
 const percussionSamples: (AudioBuffer | undefined)[] = []
 
