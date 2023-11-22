@@ -336,11 +336,12 @@ export class OrganyaMusicPlayer {
               soundNode.connect(channel.volumeNode)
               const octave = ~~(note.pitch / MELODY_PITCH_CLASS_COUNT)
               soundNode.buffer = channel.audioBuffersByOctave[octave]!
-              const samplesPerSecond = getSamplesPerSecondMelody(note.pitch, track.frequencyShift)
+              /*const samplesPerSecond = getSamplesPerSecondMelody(note.pitch, track.frequencyShift)
               soundNode.playbackRate.value = samplesPerSecondToPlaybackRate(
                 samplesPerSecond,
                 soundNode.buffer.sampleRate,
-              )
+              )*/
+              soundNode.playbackRate.value = getSamplesPerSecondMelody(note.pitch, track.frequencyShift) / 22050
 
               soundNode.start(startTime)
               let endTime
@@ -367,11 +368,12 @@ export class OrganyaMusicPlayer {
             const soundNode = this.#context.createBufferSource()
             soundNode.connect(channel.volumeNode)
             soundNode.buffer = channel.audioBuffer
-            const samplesPerSecond = getSamplesPerSecondPercussion(note.pitch)
+            /*const samplesPerSecond = getSamplesPerSecondPercussion(note.pitch)
             soundNode.playbackRate.value = samplesPerSecondToPlaybackRate(
               samplesPerSecond,
               soundNode.buffer.sampleRate,
-            )
+            )*/
+            soundNode.playbackRate.value = getSamplesPerSecondPercussion(note.pitch) / 22050
 
             soundNode.start(startTime)
             soundNode.loop = false
