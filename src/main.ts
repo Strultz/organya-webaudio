@@ -234,11 +234,12 @@ await (async () => {
     if (!res.ok) {
       throw new Error("Failed to fetch percussion waveform data.")
     }
-    percussionSamples[index] = await audioContext.value.decodeAudioData(await res.arrayBuffer())
+    const arb = await res.arrayBuffer();
+    return audioContext.value.decodeAudioData(arb)
   }
 
   for (let i = 0; i < percussionNames.length; i++) {
-    register(i, percussionNames[i]!);
+    percussionSamples[index] = await register(i, percussionNames[i]!);
   }
 })()
 
