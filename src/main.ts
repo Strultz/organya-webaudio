@@ -278,7 +278,7 @@ async function loadWav(name: string): Promise<AudioBuffer | undefined> {
     throw new Error(`Invalid data ${name}`)
   }
     
-  const mdb = ((2 ** bits) / 2) | 0
+  const mdb = (2 ** bits) / 2
   const audioBuffer = new AudioBuffer({ numberOfChannels: channels, length: wavLen / channels, sampleRate: samples })
   for (let j = 0; j < wavLen; j += channels) {
     for (let k = 0; k < channels; k++) {
