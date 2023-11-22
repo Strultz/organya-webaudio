@@ -204,9 +204,9 @@ function setSelectedSong(): void {
 }
 
 musicOptions.addEventListener("change", setSelectedSong)
-musicControls.addEventListener("submit", async e => {
+musicControls.addEventListener("submit", e => {
   e.preventDefault()
-  await setSelectedSong()
+  //await setSelectedSong()
   if (e.submitter === musicStop) {
     musicPlayer.value.pause()
     musicPlayer.value.position = 0
