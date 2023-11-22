@@ -1,6 +1,4 @@
 import { Lazy } from "./utils/Lazy.js"
-import { readPixToneParameters } from "./pixTone/readPixToneParameters.js"
-import { renderPixToneSample } from "./pixTone/renderPixToneSample.js"
 import { OrganyaMusicPlayer } from "./organya/OrganyaMusicPlayer.js"
 import type { OrganyaSong } from "./organya/OrganyaSong.js"
 import { readOrganyaSong } from "./organya/readOrganyaSong.js"
@@ -9,7 +7,7 @@ const audioContext = new Lazy(() => new AudioContext({ latencyHint: "interactive
 
 // Init SFX controls.
 
-const sfxControlsTemplate = document.getElementById("sfx-controls-template") as HTMLTemplateElement
+/*const sfxControlsTemplate = document.getElementById("sfx-controls-template") as HTMLTemplateElement
 const sfxControlsClone = sfxControlsTemplate.content.cloneNode(true) as DocumentFragment
 const sfxControls = sfxControlsClone.firstElementChild as HTMLFormElement
 const sfxOptions = sfxControls.querySelector<HTMLSelectElement>(".options")!
@@ -139,7 +137,7 @@ sfxOptions.addEventListener("change", playSelectedSfx)
 sfxControls.addEventListener("submit", e => {
   e.preventDefault()
   playSelectedSfx()
-})
+})*/
 
 // Init music controls.
 
@@ -368,5 +366,5 @@ const soundTestContainer = document.getElementById("sound-test") as HTMLElement
 for (const childNode of soundTestContainer.childNodes) {
   childNode.remove()
 }
-soundTestContainer.append(sfxControls)
+//soundTestContainer.append(sfxControls)
 soundTestContainer.append(musicControls)
