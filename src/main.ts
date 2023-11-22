@@ -173,61 +173,6 @@ const melodyWaveformData = await (async () => {
   return await res.arrayBuffer()
 })()
 
-const percussionSamples = new Array<AudioBuffer>(8);
-
-const percussionNames = [
-  "BASS01",
-"BASS02",
-"SNARE01",
-"SNARE02",
-"TOM01", 
-
-"HICLOSE",
-"HIOPEN",
-"CRASH",
-"PER01",
-"PER02", 
-
-"BASS03",
-"TOM02",
-"BASS04",
-"BASS05",
-"SNARE03", 
-
-"SNARE04",
-"HICLOSE02",
-"HIOPEN02",
-"HICLOSE03",
-"HIOPEN03", 
-
-"CRASH02",
-"REVSYM01",
-"RIDE01",
-"TOM03",
-"TOM04", 
-
-"ORCDRM01",
-"BELL",
-"CAT" ,
-"BASS06",
-"BASS07", 
-
-"SNARE05",
-"SNARE06",
-"SNARE07",
-"TOM05",
-"HIOPEN04", 
-
-"HICLOSE04",
-"CLAP01",
-"PESI01",
-"QUICK01",
-"BASS08" , 
-
-"SNARE08",
-"HICLOSE05",
-]
-
 /*const percussionSamples = [
   sfxSamples.get("150"),
   sfxSamples.get("151"),
@@ -273,21 +218,9 @@ async function setSelectedSong(): Promise<void> {
     })
     // In Cave Story, percussion instrument types are fixed (unlike in other Organya implementations), so we need to
     // modify the percussion tracks to get the expected sounds.
-
-    await (async () => {
-      function register(index: number, name: string): void {
-        const res = await fetch(new URL(`./data/WAVE/${name}`, import.meta.url))
-        if (!res.ok) {
-          throw new Error("Failed to fetch percussion waveform data.")
-        }
-        percussionSamples[index] = await audioContext.decodeAudioData(await res.arrayBuffer())
-      }
-
-      for (let i = 8; i < song.tracks.length; i++) {
-        //;(song.tracks[i] as { instrument: number }).instrument = i - 8
-        register(i - 8, percussionNames[i]);
-      }
-    })()
+    //for (let i = 8; i < song.tracks.length; i++) {
+      //;(song.tracks[i] as { instrument: number }).instrument = i - 8
+    //}
     songCache.set(selectedSongKey, song)
   }
   if (musicPlayer.value.song !== song) {
