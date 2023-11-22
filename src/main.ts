@@ -239,12 +239,12 @@ async function loadWav(name: string): Promise<AudioBuffer | undefined> {
   const view = new DataView(buf)
   const i8a = new Int8Array(buf)
   let i = 0
-  const hdr = view.getUint32(i, true); i += 8 // skip
-  if (hr != 0x46464952) { // 'RIFF'
+  const riffc = view.getUint32(i, true); i += 8 // skip
+  if (riffc != 0x46464952) { // 'RIFF'
     return undefined
   }
-  const rft = view.getUint32(i, true); i += 4
-  if (hr != 0x45564157) { // 'WAVE'
+  const wavec = view.getUint32(i, true); i += 4
+  if (wavec != 0x45564157) { // 'WAVE'
     return undefined
   }
 
