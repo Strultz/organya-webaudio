@@ -103,6 +103,7 @@ main {
   color: inherit;
   background: var(--color-red);
   border: 1px solid var(--color-yellow);
+  touch-action: manipulation;
 }
 
 .sound-test-controls select {
