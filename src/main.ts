@@ -82,7 +82,7 @@ function rbufferle(bits: number, i8a: Uint8Array, index: number): number {
   let num = 0
   let bytes = bits / 8
   for (let i = 0; i < bytes; ++i) {
-    num |= i8a[i] << ((bytes - i - 1) * 8);
+    num |= i8a[index + i]! << ((bytes - i - 1) * 8);
   }
   return num
 }
