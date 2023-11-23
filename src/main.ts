@@ -1,6 +1,6 @@
 import { Lazy } from "./utils/Lazy.js"
 import { OrganyaMusicPlayer } from "./organya/OrganyaMusicPlayer.js"
-//import type { OrganyaSong } from "./organya/OrganyaSong.js"
+// import type { OrganyaSong } from "./organya/OrganyaSong.js"
 import { readOrganyaSong } from "./organya/readOrganyaSong.js"
 
 const audioContext = new Lazy(() => new AudioContext({ latencyHint: "interactive" }))
@@ -78,7 +78,15 @@ const percussionNames = [
 "HICLOSE05",
 ]
 
-//await (async () => {
+function rbufferle(bits: number, i8a: Uint8Array, index: number): number {
+  let num = 0
+  let bytes = bits / 8
+  for (let i = 0; i < bytes; ++i) {
+    num |= i8a[i] << ((bytes - i - 1) * 8);
+  }
+  return num
+}
+
 async function loadWav(name: string): Promise<AudioBuffer | undefined> {
   const res = await fetch(new URL(`./data/WAVE/${name}`, import.meta.url))
   if (!res.ok) {
@@ -97,19 +105,14 @@ async function loadWav(name: string): Promise<AudioBuffer | undefined> {
   if (wavec != 0x45564157) { // 'WAVE'
     throw new Error(`Invalid WAVE ${name}`)
   }
-
-  const riffId = view.getUint32(i, true); i += 8 // skip
-  //const riffLen = view.getUint32(i, true); i += 4
-  if (riffId != 0x20746d66) { // 'fmt '
+  const fmt_c = view.getUint32(i, true); i += 8 // skip
+  if (fmt_c != 0x20746d66) { // 'fmt '
     throw new Error(`Invalid fmt  ${name}`)
-    // return undefined
   }
 
-  //const startPos = i
   const aFormat = view.getUint16(i, true); i += 2
   if (aFormat != 1) {
     throw new Error(`Invalid format ${name}`)
-    //return undefined
   }
 
   const channels = view.getUint16(i, true); i += 2
@@ -121,38 +124,30 @@ async function loadWav(name: string): Promise<AudioBuffer | undefined> {
     i += view.getUint32(i, true); i += 4;
   }
   
-  const wavData = view.getUint32(i, true); i += 4
-  const wavLen = view.getUint32(i, true); i += 4
-
-  if (wavData != 0x61746164) { // 'data'
+  const datac = view.getUint32(i, true); i += 4
+  if (datac != 0x61746164) { // 'data'
     throw new Error(`Invalid data ${name}`)
   }
-    
+  
+  const length = view.getUint32(i, true); i += 4
+  
   const mdb = (2 ** bits) / 2
-  const audioBuffer = new AudioBuffer({ numberOfChannels: channels, length: wavLen / channels, sampleRate: samples })
-  for (let j = 0; j < wavLen; j += channels) {
+  const audioBuffer = new AudioBuffer({ numberOfChannels: channels, length: length / channels, sampleRate: samples })
+  for (let j = 0; j < length; j += channels) {
     for (let k = 0; k < channels; k++) {
       const channelBuffer = audioBuffer.getChannelData(k)
-      channelBuffer[j / channels] = (i8a[i + j + k]! - mdb) / mdb
+      let br = rbufferle(bits, i8a, i + j + k)
+      if (bits <= 8) br -= mdb
+      else br = br << (32 - bits) >> (32 - bits) // goofy hack
+      channelBuffer[j / channels] = br / mdb
     }
   }
   return audioBuffer
-  // return audioContext.value.decodeAudioData()
 }
 
 for (let i = 0; i < percussionNames.length; i++) {
   percussionSamples[i] = await loadWav(percussionNames[i]!);
 }
-//})()
-
-/*const percussionSamples = [
-  sfxSamples.get("150"),
-  sfxSamples.get("151"),
-  sfxSamples.get("152"),
-  sfxSamples.get("153"),
-  sfxSamples.get("154"),
-  sfxSamples.get("155"),
-]*/
 
 const musicPlayer = new Lazy<OrganyaMusicPlayer>(() => {
   const musicPlayer = new OrganyaMusicPlayer(audioContext.value, melodyWaveformData, percussionSamples)
@@ -171,18 +166,13 @@ const musicPlayer = new Lazy<OrganyaMusicPlayer>(() => {
   return musicPlayer
 })
 
-//const songCache = new Map<string, OrganyaSong>()
-
 function setSelectedSong(): void {
   const selectedSongFile = musicOptions.files![0]
-  //let song = songCache.get(selectedSongKey)
-  //if (song == undefined) {
+  if (selectedSongFile == undefined) {
+    return
+  }
   const reader = new FileReader()
   reader.onload = function() {
-    /*const res = await fetch(new URL(`./data/ORG/${selectedSongKey}`, import.meta.url))
-    if (!res.ok) {
-      throw new Error("Failed to fetch Organya song.")
-    }*/
     const song = readOrganyaSong(reader.result as ArrayBuffer, (level, message) => {
       if (level === "warning") {
         console.warn(message)
@@ -190,12 +180,6 @@ function setSelectedSong(): void {
         console.error(message)
       }
     })
-    // In Cave Story, percussion instrument types are fixed (unlike in other Organya implementations), so we need to
-    // modify the percussion tracks to get the expected sounds.
-    //for (let i = 8; i < song.tracks.length; i++) {
-      //;(song.tracks[i] as { instrument: number }).instrument = i - 8
-    //}
-    //songCache.set(selectedSongKey, song)
     if (musicPlayer.value.song !== song) {
       musicPlayer.value.song = song
     }
@@ -206,7 +190,6 @@ function setSelectedSong(): void {
 musicOptions.addEventListener("change", setSelectedSong)
 musicControls.addEventListener("submit", e => {
   e.preventDefault()
-  //await setSelectedSong()
   if (e.submitter === musicStop) {
     musicPlayer.value.pause()
     musicPlayer.value.position = 0
@@ -215,11 +198,10 @@ musicControls.addEventListener("submit", e => {
   }
 })
 
-// Insert SFX and music controls.
+// Insert music controls.
 
 const soundTestContainer = document.getElementById("sound-test") as HTMLElement
 for (const childNode of soundTestContainer.childNodes) {
   childNode.remove()
 }
-//soundTestContainer.append(sfxControls)
 soundTestContainer.append(musicControls)
