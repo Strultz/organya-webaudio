@@ -207,10 +207,10 @@ export class OrganyaMusicPlayer {
         }
       } else {
         for (const sound of channel.scheduledSounds) {
-          if (sound.startTime > contextTime) {
+          //if (sound.startTime > contextTime) {
             // The sound has not yet started playing.
-            sound.soundNode.stop()
-          }
+          sound.soundNode.stop() // Just stop it
+          //}
           // Unlike melody sounds, percussion sounds are fire-and-forget and will always play out in full even if
           // playback is paused, so we don't need to do anything with currently playing sounds.
         }
