@@ -248,21 +248,13 @@ export class OrganyaMusicPlayer {
         continue
       }
       // Because notes are always processed in order, 'channel.scheduledSounds' is naturally always sorted by start
-      // time in ascending order, so we only need to find the first not ended (melody) or not started (percussion)
-      // sound and clear everything in the array that comes before it.
-      if (channel.type === "melody" && !track.pipi) {
-        let firstNotEndedSoundIndex = channel.scheduledSounds.findIndex(s => s.endTime > contextTime)
-        if (firstNotEndedSoundIndex === -1) {
-          firstNotEndedSoundIndex = channel.scheduledSounds.length // Clear the entire array.
-        }
-        channel.scheduledSounds.splice(0, firstNotEndedSoundIndex)
-      } else {
-        let firstNotStartedSoundIndex = channel.scheduledSounds.findIndex(s => s.startTime > contextTime)
-        if (firstNotStartedSoundIndex === -1) {
-          firstNotStartedSoundIndex = channel.scheduledSounds.length // Clear the entire array.
-        }
-        channel.scheduledSounds.splice(0, firstNotStartedSoundIndex)
+      // time in ascending order, so we only need to find the first not ended sound and clear everything in the
+      // array that comes before it.
+      let firstNotEndedSoundIndex = channel.scheduledSounds.findIndex(s => s.endTime > contextTime)
+      if (firstNotEndedSoundIndex === -1) {
+        firstNotEndedSoundIndex = channel.scheduledSounds.length // Clear the entire array.
       }
+      channel.scheduledSounds.splice(0, firstNotEndedSoundIndex)
     }
 
     if (this.#song == undefined) {
@@ -313,6 +305,7 @@ export class OrganyaMusicPlayer {
                 // Stop any previous sound that would have played past the current step.
                 const previousSound = channel.scheduledSounds[channel.scheduledSounds.length - 1]!
                 if (track.pipi) {
+                  previousSound.endTime = startTime
                   previousSound.soundNode.stop(startTime)
                 } else {
                   if (previousSound.endStep > this.#schedulerStep) {
@@ -343,9 +336,11 @@ export class OrganyaMusicPlayer {
               let endTime
               let endStep
               if (track.pipi) {
-                endTime = startTime
-                endStep = this.#schedulerStep
+                const lengthSeconds = soundNode.buffer!.duration / soundNode.playbackRate.value
+                endTime = startTime + lengthSeconds
+                endStep = this.#schedulerStep + note.duration
                 soundNode.loop = false
+                soundNode.stop(endTime)
               } else {
                 endTime = getEndTime(soundNode, startTime, note.duration, stepDurationSeconds)
                 endStep = this.#schedulerStep + note.duration
@@ -359,6 +354,7 @@ export class OrganyaMusicPlayer {
             if (channel.scheduledSounds.length > 0) {
               // Stop any previous sound that would have played past the current step.
               const previousSound = channel.scheduledSounds[channel.scheduledSounds.length - 1]!
+              previousSound.endTime = startTime
               previousSound.soundNode.stop(startTime)
             }
             const soundNode = this.#context.createBufferSource()
@@ -372,9 +368,12 @@ export class OrganyaMusicPlayer {
             soundNode.playbackRate.value = getSamplesPerSecondPercussion(note.pitch) / 22050
 
             soundNode.start(startTime)
+            const lengthSeconds = soundNode.buffer!.duration / soundNode.playbackRate.value
+            const endTime = startTime + lengthSeconds
             soundNode.loop = false
-
-            channel.scheduledSounds.push({ soundNode, startTime })
+            soundNode.stop(endTime)
+    
+            channel.scheduledSounds.push({ soundNode, startTime, endTime })
           }
         }
 
@@ -563,10 +562,10 @@ type Channel = MelodyChannel | PercussionChannel
 interface ScheduledSoundBase {
     readonly soundNode: AudioBufferSourceNode
     readonly startTime: number
+    endTime: number
 }
 
 interface ScheduledMelodySound extends ScheduledSoundBase {
-    endTime: number
     readonly startStep: number
     endStep: number
 }
