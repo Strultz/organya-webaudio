@@ -157,11 +157,13 @@ const musicPlayer = new Lazy<OrganyaMusicPlayer>(() => {
   musicPlayer.connect(gainNode)
   gainNode.connect(audioContext.value.destination)
 
-  function updateStatusText() {
+  function renderInterface() {
+    // Here's where we could render the interface. For now it's just setting text to the position.
+    // Later this will render an OrgMaker interface (non-interactable) to a canvas to preview the song.
     musicStatus.textContent = musicPlayer.position.toFixed(3)
-    requestAnimationFrame(updateStatusText)
+    requestAnimationFrame(renderInterface)
   }
-  updateStatusText()
+  renderInterface()
 
   return musicPlayer
 })
