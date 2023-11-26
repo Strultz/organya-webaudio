@@ -1,31 +1,19 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <title>Organya WebAudio</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="stylesheet" href="style.css">
     <script type="module" src="main.ts"></script>
   </head>
   <body>
-    <nav><a href="https://github.com/Strultz/organya-webaudio">GitHub</a></nav>
-    <main id="sound-test">Loading...</main>
-    <canvas id="organya-canvas" width="800" height="600">Rendering is not supported.</canvas>
-    <template id="music-controls-template">
-      <form class="music-controls sound-test-controls">
-        <fieldset>
-          <div class="legend">
-            <span class="title">Organya</span>
-            <span class="status">0.000</span>
-          </div>
-          <div class="controls-group">
-            <input type="file" class="options" accept=".org">
-            <input type="submit" class="play-pause" value="Play/Pause">
-            <input type="submit" class="stop" value="Stop">
-          </div>
-        </fieldset>
-      </form>
-    </template>
+    <div id="loading">Loading...</div>
+    <div id="player" style="display: none">
+      <canvas id="organya-canvas" width="800" height="600">Rendering is not supported.</canvas>
+      <input type="file" id="music-file" accept=".org">
+      <button type="button" id="music-play">Play/Pause</button>
+      <button type="button" id="music-stop">Stop</button>
+    </div>
   </body>
 </html>

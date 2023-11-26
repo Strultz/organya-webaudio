@@ -5,14 +5,9 @@ import { readOrganyaSong } from "./organya/readOrganyaSong.js"
 
 const audioContext = new Lazy(() => new AudioContext({ latencyHint: "interactive" }))
 
-// Init music controls.
-
-const musicControlsTemplate = document.getElementById("music-controls-template") as HTMLTemplateElement
-const musicControlsClone = musicControlsTemplate.content.cloneNode(true) as DocumentFragment
-const musicControls = musicControlsClone.firstElementChild as HTMLFormElement
-//const musicStatus = musicControls.querySelector<HTMLSpanElement>(".status")!
-const musicOptions = musicControls.querySelector<HTMLInputElement>(".options")!
-const musicStop = musicControls.querySelector<HTMLInputElement>(".stop")!
+const musicInput = document.getElementById("music-file") as HTMLInputElement
+const musicPlay = document.getElementById("music-play") as HTMLButtonElement
+const musicStop = document.getElementById("music-stop") as HTMLButtonElement
 
 const melodyWaveformData = await (async () => {
   const res = await fetch(new URL("data/WAVE/WAVE100", import.meta.url))
@@ -153,7 +148,7 @@ const musicPlayer = new Lazy<OrganyaMusicPlayer>(() => {
   const musicPlayer = new OrganyaMusicPlayer(audioContext.value, melodyWaveformData, percussionSamples)
 
   const gainNode = audioContext.value.createGain()
-  gainNode.gain.value = .75
+  gainNode.gain.value = 0.75
   musicPlayer.connect(gainNode)
   gainNode.connect(audioContext.value.destination)
 
@@ -161,7 +156,7 @@ const musicPlayer = new Lazy<OrganyaMusicPlayer>(() => {
 })
 
 function setSelectedSong(): void {
-  const selectedSongFile = musicOptions.files![0]
+  const selectedSongFile = musicInput.files![0]
   if (selectedSongFile == undefined) {
     return
   }
@@ -181,24 +176,22 @@ function setSelectedSong(): void {
   reader.readAsArrayBuffer(selectedSongFile!)
 }
 
-musicOptions.addEventListener("change", setSelectedSong)
-musicControls.addEventListener("submit", e => {
+musicInput.addEventListener("change", setSelectedSong)
+musicPlay.addEventListener("click", e => {
   e.preventDefault()
-  if (e.submitter === musicStop) {
-    musicPlayer.value.pause()
-    musicPlayer.value.position = 0
-  } else {
-    musicPlayer.value.state === "paused" ? musicPlayer.value.play() : musicPlayer.value.pause()
-  }
+  musicPlayer.value.state === "paused" ? musicPlayer.value.play() : musicPlayer.value.pause()
+})
+musicStop.addEventListener("click", e => {
+  e.preventDefault()
+  musicPlayer.value.pause()
+  musicPlayer.value.position = 0
 })
 
-// Insert music controls.
+const loader = document.getElementById("loading") as HTMLElement
+const player = document.getElementById("player") as HTMLElement
 
-const soundTestContainer = document.getElementById("sound-test") as HTMLElement
-for (const childNode of soundTestContainer.childNodes) {
-  childNode.remove()
-}
-soundTestContainer.append(musicControls)
+loader.remove()
+player.style.display = "block"
 
 // Rendering
 
@@ -254,7 +247,7 @@ if (canvas != undefined) {
     const songStart = song == undefined ? 0 : song.repeatStart
     const songEnd = song == undefined ? 1600 : song.repeatEnd
     
-    if (musicPlayer.value.state === "playing") hScroll = Math.floor(musicPlayer.value.position + 0.001) // hack
+    hScroll = Math.floor(musicPlayer.value.position + 0.001) // hack
     
     context.clearRect(0, 0, canvas.width, canvas.height)
     
@@ -412,36 +405,44 @@ if (canvas != undefined) {
       if (vScroll > 95) vScroll = 95
       break;
     case "ArrowLeft": {
+      if (musicPlayer.value.state === "playing") break;
+      
       const songLine = musicPlayer.value.song == undefined ? 4 : musicPlayer.value.song.beatsPerBar
       const songDot = musicPlayer.value.song == undefined ? 4 : musicPlayer.value.song.stepsPerBeat
       
       const k = songLine * songDot
       
-      if (e.ctrlKey) hScroll = 0
+      let hsc = hScroll
+      
+      if (e.ctrlKey) hsc = 0
       else {
-        if (e.shiftKey) hScroll = ((hScroll - 1) / k | 0) * k
-        else hScroll--
+        if (e.shiftKey) hsc = ((hsc - 1) / k | 0) * k
+        else hsc--
         
-        if (hScroll < 0) hScroll = 0
+        if (hsc < 0) hsc = 0
       }
       
-      musicPlayer.value.position = hScroll
+      musicPlayer.value.position = hsc
       break;
     }
     case "ArrowRight": {
+      if (musicPlayer.value.state === "playing") break;
+      
       const songLine = musicPlayer.value.song == undefined ? 4 : musicPlayer.value.song.beatsPerBar
       const songDot = musicPlayer.value.song == undefined ? 4 : musicPlayer.value.song.stepsPerBeat
       const songEnd = musicPlayer.value.song == undefined ? 1600 : musicPlayer.value.song.repeatEnd
       
       const k = songLine * songDot
       
-      if (e.ctrlKey) hScroll = songEnd
+      let hsc = hScroll
+      
+      if (e.ctrlKey) hsc = songEnd
       else {
-        if (e.shiftKey) hScroll = ((hScroll / k | 0) + 1) * k
-        else hScroll++
+        if (e.shiftKey) hsc = ((hsc / k | 0) + 1) * k
+        else hsc++
       }
       
-      musicPlayer.value.position = hScroll
+      musicPlayer.value.position = hsc
       break;
     }
     default: return
