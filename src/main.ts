@@ -364,7 +364,7 @@ if (canvas != undefined) {
   }
     
   orgTex.onload = () => requestAnimationFrame(renderInterface)
-  orgTex.src = "/BITMAP/MUSIC.png"
+  orgTex.src = "BITMAP/MUSIC.png"
   
   canvas.addEventListener("wheel", (e) => {
     e.preventDefault()

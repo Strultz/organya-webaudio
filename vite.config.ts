@@ -4,7 +4,7 @@ export default defineConfig({
   root: "src/",
   publicDir: "public",
   assetsInclude: ["**/data/**"],
-  base: "./",
+  base: "",
   build: {
     target: "esnext",
     polyfillModulePreload: false,
