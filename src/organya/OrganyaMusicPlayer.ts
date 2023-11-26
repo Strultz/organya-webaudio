@@ -219,7 +219,7 @@ export class OrganyaMusicPlayer {
 
     const stepDurationSeconds = getStepDurationSeconds(this.#song)
     const contextStep = getContextStep(contextTime, this.#contextTimeOffset, stepDurationSeconds)
-    this.#schedulerStep = boundStep(Math.floor(contextStep) + 1, this.#song)
+    this.#schedulerStep = boundStep(Math.floor(contextStep), this.#song)
     this.#state = "paused"
   }
 

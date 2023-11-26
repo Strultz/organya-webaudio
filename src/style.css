@@ -21,8 +21,6 @@ html {
 }
 
 body {
-  display: flex;
-  justify-content: center;
   min-height: 100%;
   margin: 0;
   font: var(--font-size) "Courier New", monospace;
