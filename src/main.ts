@@ -221,8 +221,8 @@ if (canvas != undefined) {
       if (y < 0 || y >= canvas.height - 144) return
       
       let txx = 176 + (track % 2) * noteWidth
-      let txy = 11 + ((track % 8) / 2 | 0) * 6 + (track == curTrack ? 24 : 0)
-      if ((track / 8 | 0) != (curTrack / 8 | 0)) {
+      let txy = 11 + ~~((track % 8) / 2) * 6 + (track == curTrack ? 24 : 0)
+      if (~~(track / 8) != ~~(curTrack / 8)) {
         txx = 256
         txy = 64 + (darkNote ? 6 : 0)
       }
@@ -231,7 +231,7 @@ if (canvas != undefined) {
       
       for (let j = 1; j < note.duration; j++) {
         txy = (track == curTrack ? 0 : 32) + (track % 8) * 4
-        if ((track / 8 | 0) != (curTrack / 8 | 0)) {
+        if (~~(track / 8) != ~~(curTrack / 8)) {
           txy = 76 + (darkNote ? 4 : 0)
         }
         context.drawImage(orgTex, 256, txy, noteWidth, 4, x + (j * noteWidth), y + 3, noteWidth, 4)
@@ -247,14 +247,19 @@ if (canvas != undefined) {
     const songStart = song == undefined ? 0 : song.repeatStart
     const songEnd = song == undefined ? 1600 : song.repeatEnd
     
-    hScroll = Math.floor(musicPlayer.value.position + 0.001) // hack
+    if (musicPlayer.value.state == "playing") {
+      hScroll = Math.floor(musicPlayer.value.position + 0.001) // hack
+      hScroll = Math.min(hScroll, songEnd)
+    } else {
+      hScroll = Math.floor(musicPlayer.value.position)
+    }
     
     context.clearRect(0, 0, canvas.width, canvas.height)
     
     const measScroll = hScroll % (songLine * songDot)
     
     for (let i = 0 - (vScroll % 12) * 12; i < canvas.height - 144; i += 144) {
-      for (let j = measScroll; j < (canvas.width / noteWidth | 0) + measScroll; j++) {
+      for (let j = measScroll; j < ~~(canvas.width / noteWidth) + measScroll; j++) {
         const x = 64 + j * noteWidth - measScroll * noteWidth;
         if (x < 64) continue;
         if (x >= canvas.width) break;
@@ -265,18 +270,18 @@ if (canvas != undefined) {
       }
     }
     
-    const selPerc = ((curTrack / 8 | 0) % 2) == 1
+    const selPerc = (~~(curTrack / 8) % 2) == 1
     
     if (song != undefined) {
       if (selPerc) {
+        for (let i = 0; i < 16; i++) {
+          if (i != curTrack) drawNotes(song, i)
+        }
+      } else {
         for (let i = 8; i < 16; i++) {
           if (i != curTrack) drawNotes(song, i)
         }
         for (let i = 0; i < 8; i++) {
-          if (i != curTrack) drawNotes(song, i)
-        }
-      } else {
-        for (let i = 0; i < 16; i++) {
           if (i != curTrack) drawNotes(song, i)
         }
       }
@@ -292,12 +297,12 @@ if (canvas != undefined) {
       context.drawImage(orgTex, 192, 0, noteWidth, 144, ex, canvas.height - 144 - 11, noteWidth, 144)
     }
     
-    for (let i = hScroll - 4; i < (canvas.width / 16 | 0) + hScroll; i++) {
+    for (let i = hScroll - 4; i < ~~(canvas.width / 16) + hScroll; i++) {
       if (i % (songLine * songDot) != 0) continue
       let x = 64 + i * noteWidth - hScroll * noteWidth
       if (x < 0 || x >= canvas.width) break
       
-      let meas = i / (songLine * songDot) | 0
+      let meas = ~~(i / (songLine * songDot))
       let k1000 = 0
       let k100 = 0
       let k10 = 0
@@ -335,7 +340,7 @@ if (canvas != undefined) {
       context.drawImage(orgTex, 176 + (i * 8), 148, 8, 12, 55, y, 8, 12)
     }
     
-    for (let j = measScroll; j < (canvas.width / noteWidth | 0) + measScroll; j++) {
+    for (let j = measScroll; j < ~~(canvas.width / noteWidth) + measScroll; j++) {
       const x = 64 + j * noteWidth - measScroll * noteWidth;
       if (x < 64) continue;
       if (x >= canvas.width) break;
@@ -353,7 +358,7 @@ if (canvas != undefined) {
           context.drawImage(orgTex, 207, 0, noteWidth, 5, x, canvas.height - 81 - (note.pan * 5), noteWidth, 5)
         }
         if (note.volume != 255) {
-          context.drawImage(orgTex, 207, 0, noteWidth, 5, x, canvas.height - 6 - (note.volume / 4 | 0), noteWidth, 5)
+          context.drawImage(orgTex, 207, 0, noteWidth, 5, x, canvas.height - 6 - ~~(note.volume / 4), noteWidth, 5)
         }
       })
     }
@@ -416,7 +421,7 @@ if (canvas != undefined) {
       
       if (e.ctrlKey) hsc = 0
       else {
-        if (e.shiftKey) hsc = ((hsc - 1) / k | 0) * k
+        if (e.shiftKey) hsc = ~~((hsc - 1) / k) * k
         else hsc--
         
         if (hsc < 0) hsc = 0
@@ -438,7 +443,7 @@ if (canvas != undefined) {
       
       if (e.ctrlKey) hsc = songEnd
       else {
-        if (e.shiftKey) hsc = ((hsc / k | 0) + 1) * k
+        if (e.shiftKey) hsc = (~~(hsc / k) + 1) * k
         else hsc++
       }
       
