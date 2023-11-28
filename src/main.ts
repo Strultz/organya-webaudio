@@ -374,12 +374,23 @@ if (canvas != undefined) {
   canvas.addEventListener("wheel", (e) => {
     e.preventDefault()
     
-    if (e.deltaY < 0) {
-      vScroll -= 4
-      if (vScroll < 0) vScroll = 0
-    } else if (e.deltaY > 0) {
-      vScroll += 4
-      if (vScroll > 95) vScroll = 95
+    if (e.ctrlKey) {
+      let hsc = hScroll
+      if (e.deltaY < 0) {
+        hsc -= 4
+        if (hsc < 0) hsc = 0
+      } else if (e.deltaY > 0) {
+        hsc += 4
+      }
+      musicPlayer.value.position = hsc
+    } else {
+      if (e.deltaY < 0) {
+        vScroll -= 4
+        if (vScroll < 0) vScroll = 0
+      } else if (e.deltaY > 0) {
+        vScroll += 4
+        if (vScroll > 95) vScroll = 95
+      }
     }
   })
   addEventListener("keydown", (e) => {
