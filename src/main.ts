@@ -6,8 +6,6 @@ import { readOrganyaSong } from "./organya/readOrganyaSong.js"
 const audioContext = new Lazy(() => new AudioContext({ latencyHint: "interactive" }))
 
 const musicInput = document.getElementById("music-file") as HTMLInputElement
-const musicPlay = document.getElementById("music-play") as HTMLButtonElement
-const musicStop = document.getElementById("music-stop") as HTMLButtonElement
 
 const melodyWaveformData = await (async () => {
   const res = await fetch(new URL("data/WAVE/WAVE100", import.meta.url))
@@ -155,6 +153,14 @@ const musicPlayer = new Lazy<OrganyaMusicPlayer>(() => {
   return musicPlayer
 })
 
+// Rendering/input
+
+let hScroll = 0
+let vScroll = 36
+let curTrack = 0
+  
+const noteWidth = 16
+
 function setSelectedSong(): void {
   const selectedSongFile = musicInput.files![0]
   if (selectedSongFile == undefined) {
@@ -171,42 +177,102 @@ function setSelectedSong(): void {
     })
     if (musicPlayer.value.song !== song) {
       musicPlayer.value.song = song
+      hScroll = 0
     }
   }
   reader.readAsArrayBuffer(selectedSongFile!)
 }
 
-musicInput.addEventListener("change", setSelectedSong)
-musicPlay.addEventListener("click", e => {
-  e.preventDefault()
-  musicPlayer.value.state === "paused" ? musicPlayer.value.play() : musicPlayer.value.pause()
-})
-musicStop.addEventListener("click", e => {
-  e.preventDefault()
-  musicPlayer.value.pause()
-  musicPlayer.value.position = 0
-})
-
-const loader = document.getElementById("loading") as HTMLElement
-const player = document.getElementById("player") as HTMLElement
-
-loader.remove()
-player.style.display = "block"
-
-// Rendering
+const musicPlay = document.getElementById("music-play") as HTMLButtonElement
+const musicStop = document.getElementById("music-stop") as HTMLButtonElement
+const musicEnd = document.getElementById("music-end") as HTMLButtonElement
+const musicStart = document.getElementById("music-start") as HTMLButtonElement
+const musicNext = document.getElementById("music-next") as HTMLButtonElement
+const musicLast = document.getElementById("music-last") as HTMLButtonElement
+const musicNextMeas = document.getElementById("music-next-meas") as HTMLButtonElement
+const musicLastMeas = document.getElementById("music-last-meas") as HTMLButtonElement
 
 const canvas = document.getElementById("organya-canvas") as HTMLCanvasElement
-  
+
+if (musicInput != undefined) musicInput.addEventListener("change", setSelectedSong)
+
+if (musicPlay != undefined) musicPlay.addEventListener("click", e => {
+  e.preventDefault()
+
+  const songStart = musicPlayer.value.song == undefined ? 0 : musicPlayer.value.song.repeatStart
+  const songEnd = musicPlayer.value.song == undefined ? 1600 : musicPlayer.value.song.repeatEnd
+
+  musicPlayer.value.position = hScroll >= songEnd ? songStart : hScroll
+  musicPlayer.value.play()
+})
+
+if (musicStop != undefined) musicStop.addEventListener("click", e => {
+  e.preventDefault()
+
+  musicPlayer.value.pause()
+})
+
+if (musicEnd != undefined) musicEnd.addEventListener("click", e => {
+  e.preventDefault()
+
+  const songEnd = musicPlayer.value.song == undefined ? 1600 : musicPlayer.value.song.repeatEnd
+
+  musicPlayer.value.pause()
+  hScroll = songEnd
+})
+
+if (musicStart != undefined) musicStart.addEventListener("click", e => {
+  e.preventDefault()
+
+  musicPlayer.value.pause()
+  hScroll = 0
+})
+
+function moveHorz(cmd: number): void {
+  const songLine = musicPlayer.value.song == undefined ? 4 : musicPlayer.value.song.beatsPerBar
+  const songDot = musicPlayer.value.song == undefined ? 4 : musicPlayer.value.song.stepsPerBeat
+      
+  const k = songLine * songDot
+
+  switch(cmd) {
+  case 0:
+    hScroll--
+    break;
+  case 1:
+    hScroll = ~~((hScroll - 1) / k) * k
+    break;
+  case 2:
+    hScroll++
+    break;
+  case 3:
+    hScroll = (~~(hScroll / k) + 1) * k
+    break;
+  }
+
+  if (hScroll < 0) hScroll = 0
+}
+
+if (musicNext != undefined) musicNext.addEventListener("click", e => {
+  e.preventDefault()
+  moveHorz(2)
+})
+if (musicLast != undefined) musicLast.addEventListener("click", e => {
+  e.preventDefault()
+  moveHorz(0)
+})
+if (musicNextMeas != undefined) musicNextMeas.addEventListener("click", e => {
+  e.preventDefault()
+  moveHorz(3)
+})
+if (musicLastMeas != undefined) musicLastMeas.addEventListener("click", e => {
+  e.preventDefault()
+  moveHorz(1)
+})
+
 if (canvas != undefined) {
   const context = canvas.getContext("2d") as CanvasRenderingContext2D
 
   const orgTex = new Image()
-  
-  const noteWidth = 16
-  
-  let hScroll = 0
-  let vScroll = 36
-  let curTrack = 0
     
   function drawNotes(song: OrganyaSong, track: number): void {
     song.tracks[track]!.notes.forEach((note) => {
@@ -250,8 +316,6 @@ if (canvas != undefined) {
     if (musicPlayer.value.state == "playing") {
       hScroll = Math.floor(musicPlayer.value.position + 0.001) // hack
       hScroll = Math.min(hScroll, songEnd)
-    } else {
-      hScroll = Math.floor(musicPlayer.value.position)
     }
     
     context.clearRect(0, 0, canvas.width, canvas.height)
@@ -375,14 +439,12 @@ if (canvas != undefined) {
     e.preventDefault()
     
     if (e.ctrlKey) {
-      let hsc = hScroll
       if (e.deltaY < 0) {
-        hsc -= 4
-        if (hsc < 0) hsc = 0
+        hScroll -= 4
+        if (hScroll < 0) hScroll = 0
       } else if (e.deltaY > 0) {
-        hsc += 4
+        hScroll += 4
       }
-      musicPlayer.value.position = hsc
     } else {
       if (e.deltaY < 0) {
         vScroll -= 4
@@ -421,44 +483,14 @@ if (canvas != undefined) {
       if (vScroll > 95) vScroll = 95
       break;
     case "ArrowLeft": {
-      if (musicPlayer.value.state === "playing") break;
-      
-      const songLine = musicPlayer.value.song == undefined ? 4 : musicPlayer.value.song.beatsPerBar
-      const songDot = musicPlayer.value.song == undefined ? 4 : musicPlayer.value.song.stepsPerBeat
-      
-      const k = songLine * songDot
-      
-      let hsc = hScroll
-      
-      if (e.ctrlKey) hsc = 0
-      else {
-        if (e.shiftKey) hsc = ~~((hsc - 1) / k) * k
-        else hsc--
-        
-        if (hsc < 0) hsc = 0
-      }
-      
-      musicPlayer.value.position = hsc
+      if (e.ctrlKey) hScroll = 0
+      else moveHorz(e.shiftKey ? 1 : 0)
       break;
     }
     case "ArrowRight": {
-      if (musicPlayer.value.state === "playing") break;
-      
-      const songLine = musicPlayer.value.song == undefined ? 4 : musicPlayer.value.song.beatsPerBar
-      const songDot = musicPlayer.value.song == undefined ? 4 : musicPlayer.value.song.stepsPerBeat
       const songEnd = musicPlayer.value.song == undefined ? 1600 : musicPlayer.value.song.repeatEnd
-      
-      const k = songLine * songDot
-      
-      let hsc = hScroll
-      
-      if (e.ctrlKey) hsc = songEnd
-      else {
-        if (e.shiftKey) hsc = (~~(hsc / k) + 1) * k
-        else hsc++
-      }
-      
-      musicPlayer.value.position = hsc
+      if (e.ctrlKey) hScroll = songEnd
+      else moveHorz(e.shiftKey ? 3 : 2)
       break;
     }
     default: return
@@ -467,3 +499,9 @@ if (canvas != undefined) {
     e.preventDefault()
   })
 }
+
+const loader = document.getElementById("loading") as HTMLElement
+const player = document.getElementById("player") as HTMLElement
+
+loader.remove()
+player.style.display = "block"
