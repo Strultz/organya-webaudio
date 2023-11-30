@@ -515,7 +515,7 @@ function renderMelodyAudioBuffers(source: Int8Array, pipi: boolean): readonly Au
       sampleRate: MELODY_WAVEFORM_SAMPLE_RATE,
     })
     const destinationChannel0Buffer = destinationAudioBuffer.getChannelData(0)
-    const sourceStep = ~~(MELODY_WAVEFORM_SOURCE_LENGTH / destinationLength)
+    const sourceStep = ~~(MELODY_WAVEFORM_SOURCE_LENGTH / destinationBaseLength)
 
     let destinationIndex = 0
     let sourceIndex = 0
