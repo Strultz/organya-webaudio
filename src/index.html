@@ -27,10 +27,10 @@
           <button type="button" class="buttonrow-button" id="music-next-meas"><span style="background-position: -96px 0;" class="playerbtn-icon"></span></button>
           <button type="button" class="buttonrow-button" id="music-end"><span style="background-position: -112px 0;" class="playerbtn-icon"></span></button>
 
-          <div style="float: right;"></div>
+          <div class="right-toolbar"></div>
       </div>
       
-      <canvas id="organya-canvas" width="800" height="600" style="width:100%;height: calc(100vh - 22px);box-sizing: border-box;display: block;">Rendering is not supported.</canvas>
+      <canvas id="organya-canvas" width="800" height="600" style="box-sizing: border-box;display: block;">Rendering is not supported.</canvas>
 
       <script type="text/javascript">
         let cvs = document.getElementById("organya-canvas");
@@ -38,8 +38,8 @@
         cvs.height = window.innerHeight - 22;
         
         window.addEventListener('resize', (event) => {
-            cvs.width = cvs.clientWidth;
-            cvs.height = cvs.clientHeight;
+          cvs.width = window.innerWidth;
+          cvs.height = window.innerHeight - 22;
         }, false);
       </script>
     </div>
