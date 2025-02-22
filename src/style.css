@@ -7,6 +7,12 @@ canvas {
   image-rendering: pixelated;
 }
 
+
+.select-button {
+  width: auto;
+}
+
+
 .buttonrow {
   padding-left: 2px;
   overflow: hidden;
@@ -16,6 +22,7 @@ canvas {
   font-size: 0;
   border-bottom: 1px solid #DCDCDC;
 }
+
 .buttonrow-button {
   width: 22px;
   height: 19px;
@@ -26,15 +33,6 @@ canvas {
   vertical-align: top;
   background: #FFF;
 }
-.playerbtn-icon {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  background: url("./images/player.png");
-  background-position: 0 0;
-  background-repeat: no-repeat;
-  image-rendering: pixelated;
-}
 .buttonrow-button:hover, .buttonrow-button:focus-visible {
   background-color: #E5F3FF;
   outline: 1px solid #CCE8FF;
@@ -43,4 +41,22 @@ canvas {
   background-color: #CCE8FF;
   outline: 1px solid #99D1FF;
   padding: 3px 2px 0 4px;
+}
+
+.buttonrow-divider {
+  display: inline-block;
+  width: 1px;
+  height: 18px;
+  background: #8C8C8C;
+  margin: 2px 5px 1px 2px;
+}
+
+.playerbtn-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: url("./images/player.png");
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
 }
