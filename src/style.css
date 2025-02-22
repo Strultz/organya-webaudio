@@ -50,14 +50,19 @@ canvas {
   margin: 2px 5px 1px 2px;
 }
 
-.playerbtn-icon {
+.btn-icon {
   display: inline-block;
   width: 16px;
   height: 16px;
-  background: url("./images/player.png");
   background-position: 0 0;
   background-repeat: no-repeat;
   image-rendering: pixelated;
+}
+.playerbtn-icon {
+  background: url("./images/player.png");
+}
+.trackbtn-icon {
+  background: url("./images/tracks.png");
 }
 
 .select-button {
