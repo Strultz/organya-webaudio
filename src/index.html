@@ -11,9 +11,11 @@
   <body>
     <div id="loading">Loading...</div>
     <div id="player" style="display: none">
-      <input type="file" id="music-file" accept=".org">
       
       <div class="buttonrow" id="player-buttonrow" style="width: 800px;">
+          <input type="file" id="music-file" accept=".org" style="display: none;">
+          <input type="button" value="Select File" onclick="document.getElementById('music-file').click();" class="select-button">
+          
           <button type="button" class="buttonrow-button" id="music-start"><span style="background-position: 0 0;" class="playerbtn-icon"></span></button>
           <button type="button" class="buttonrow-button" id="music-last-meas"><span style="background-position: -16px 0;" class="playerbtn-icon"></span></button>
           <button type="button" class="buttonrow-button" id="music-last"><span style="background-position: -32px 0;" class="playerbtn-icon"></span></button>
