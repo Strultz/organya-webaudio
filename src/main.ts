@@ -417,7 +417,7 @@ if (canvas != undefined) {
     if (song != undefined) {
       song.tracks[curTrack]!.notes.forEach((note) => {
         const x = 64 + (note.start - hScroll) * noteWidth;
-        if (x > canvas.width) return
+        if (x < 64 || x > canvas.width) return
         if (note.pan != 255) {
           context.drawImage(orgTex, 207, 0, noteWidth, 5, x, canvas.height - 81 - (note.pan * 5), noteWidth, 5)
         }
