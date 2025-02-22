@@ -10,11 +10,6 @@ canvas {
 }
 
 
-.select-button {
-  width: auto;
-}
-
-
 .buttonrow {
   padding-left: 2px;
   overflow: hidden;
@@ -61,4 +56,8 @@ canvas {
   background-position: 0 0;
   background-repeat: no-repeat;
   image-rendering: pixelated;
+}
+
+.select-button {
+  width: auto;
 }
