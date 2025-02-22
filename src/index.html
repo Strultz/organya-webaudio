@@ -41,6 +41,14 @@
           cvs.width = window.innerWidth;
           cvs.height = window.innerHeight - 22;
         }, false);
+
+        document.addEventListener('dragover', (event) => {
+            e.preventDefault();
+        });
+        document.addEventListener('drop', (event) => {
+            document.getElementById('music-file').files = e.dataTransfer.files;
+            e.preventDefault();
+        });
       </script>
     </div>
   </body>
