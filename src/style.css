@@ -31,6 +31,7 @@ canvas {
   box-sizing: border-box;
   vertical-align: top;
   background: #FFF;
+  transition: background-color .5s, outline-color .5s;
 }
 .buttonrow-button:hover, .buttonrow-button:focus-visible {
   background-color: #E5F3FF;
@@ -40,6 +41,7 @@ canvas {
   background-color: #CCE8FF;
   outline: 1px solid #99D1FF;
   padding: 3px 2px 0 4px;
+  transition: none;
 }
 
 .buttonrow-divider {
