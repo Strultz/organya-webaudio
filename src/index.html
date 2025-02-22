@@ -12,9 +12,9 @@
     <div id="loading">Loading...</div>
     <div id="player" style="display: none">
       
-      <div class="buttonrow" id="player-buttonrow" style="width: 800px;">
+      <div class="buttonrow" id="player-buttonrow" style="width: 100%;box-sizing: border-box;">
           <input type="file" id="music-file" accept=".org" style="display: none;">
-          <input type="button" value="Select File" onclick="document.getElementById('music-file').click();" class="buttonrow-button select-button">
+          <button type="button" value="" onclick="document.getElementById('music-file').click();" class="buttonrow-button"><span style="background-position: -128px 0;" class="playerbtn-icon"></span></button>
           <span class="buttonrow-divider"></span>
           
           <button type="button" class="buttonrow-button" id="music-start"><span style="background-position: 0 0;" class="playerbtn-icon"></span></button>
@@ -26,9 +26,22 @@
           <button type="button" class="buttonrow-button" id="music-next" ><span style="background-position: -80px 0;" class="playerbtn-icon"></span></button>
           <button type="button" class="buttonrow-button" id="music-next-meas"><span style="background-position: -96px 0;" class="playerbtn-icon"></span></button>
           <button type="button" class="buttonrow-button" id="music-end"><span style="background-position: -112px 0;" class="playerbtn-icon"></span></button>
+
+          <div style="float: right;"></div>
       </div>
       
-      <canvas id="organya-canvas" width="800" height="600" style="height: 600px;">Rendering is not supported.</canvas>
+      <canvas id="organya-canvas" width="800" height="600" style="width:100%;height: calc(100vh - 22px);box-sizing: border-box;display: block;">Rendering is not supported.</canvas>
+
+      <script type="text/javascript">
+        let cvs = document.getElementById("organya-canvas");
+        cvs.width = window.innerWidth;
+        cvs.height = window.innerHeight - 22;
+        
+        window.addEventListener('resize', (event) => {
+            cvs.width = cvs.clientWidth;
+            cvs.height = cvs.clientHeight;
+        }, false);
+      </script>
     </div>
   </body>
 </html>
