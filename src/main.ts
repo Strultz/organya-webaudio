@@ -183,8 +183,8 @@ function setSelectedSong(): void {
       }
     })
     if (musicPlayer.value.song !== song) {
-      musicPlayer.value.song = song
       musicPlayer.value.pause()
+      musicPlayer.value.song = song
       hScroll = 0
       
       const icon = musicPlay.querySelector<HTMLSpanElement>(".playerbtn-icon");
