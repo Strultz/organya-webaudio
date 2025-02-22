@@ -154,6 +154,13 @@ const musicPlayer = new Lazy<OrganyaMusicPlayer>(() => {
 })
 
 // Rendering/input
+const musicPlay = document.getElementById("music-play") as HTMLButtonElement
+const musicEnd = document.getElementById("music-end") as HTMLButtonElement
+const musicStart = document.getElementById("music-start") as HTMLButtonElement
+const musicNext = document.getElementById("music-next") as HTMLButtonElement
+const musicLast = document.getElementById("music-last") as HTMLButtonElement
+const musicNextMeas = document.getElementById("music-next-meas") as HTMLButtonElement
+const musicLastMeas = document.getElementById("music-last-meas") as HTMLButtonElement
 
 let hScroll = 0
 let vScroll = 36
@@ -177,19 +184,15 @@ function setSelectedSong(): void {
     })
     if (musicPlayer.value.song !== song) {
       musicPlayer.value.song = song
+      musicPlayer.value.pause()
       hScroll = 0
+      
+      const icon = musicPlay.querySelector<HTMLSpanElement>(".playerbtn-icon");
+      if (icon != undefined) icon.style.backgroundPosition = "-48px 0";
     }
   }
   reader.readAsArrayBuffer(selectedSongFile!)
 }
-
-const musicPlay = document.getElementById("music-play") as HTMLButtonElement
-const musicEnd = document.getElementById("music-end") as HTMLButtonElement
-const musicStart = document.getElementById("music-start") as HTMLButtonElement
-const musicNext = document.getElementById("music-next") as HTMLButtonElement
-const musicLast = document.getElementById("music-last") as HTMLButtonElement
-const musicNextMeas = document.getElementById("music-next-meas") as HTMLButtonElement
-const musicLastMeas = document.getElementById("music-last-meas") as HTMLButtonElement
 
 const canvas = document.getElementById("organya-canvas") as HTMLCanvasElement
 
