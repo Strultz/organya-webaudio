@@ -410,7 +410,7 @@ if (canvas != undefined) {
     for (let i = 0; i < 8; i++) {
       const y = (95 - vScroll - i * 12) * 12
       if (y < -12 || y >= canvas.height - 144) continue
-      context.drawImage(orgTex, 176 + (i * 8), 148, 8, 12, 55, y, 8, 12)
+      context.drawImage(orgTex, 176 + (i * 8) + 8, 148, 8, 12, 55, y, 8, 12)
     }
     
     for (let j = measScroll; j < ~~(canvas.width / noteWidth) + measScroll; j++) {
