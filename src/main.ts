@@ -200,14 +200,18 @@ if (musicPlay != undefined) musicPlay.addEventListener("click", e => {
 
   if (musicPlayer.value.state == "playing") {
     musicPlayer.value.pause()
-    musicPlay.querySelector(".playerbtn-icon").style.backgroundPosition = "-48px 0";
+  
+    const icon = musicPlay.querySelector<HTMLSpanElement>(".playerbtn-icon");
+    if (icon != undefined) icon.style.backgroundPosition = "-48px 0";
   } else {
     const songStart = musicPlayer.value.song == undefined ? 0 : musicPlayer.value.song.repeatStart
     const songEnd = musicPlayer.value.song == undefined ? 1600 : musicPlayer.value.song.repeatEnd
   
     musicPlayer.value.position = hScroll >= songEnd ? songStart : hScroll
     musicPlayer.value.play()
-    musicPlay.querySelector(".playerbtn-icon").style.backgroundPosition = "-64px 0";
+  
+    const icon = musicPlay.querySelector<HTMLSpanElement>(".playerbtn-icon");
+    if (icon != undefined) icon.style.backgroundPosition = "-64px 0";
   }
 })
 
@@ -217,16 +221,20 @@ if (musicEnd != undefined) musicEnd.addEventListener("click", e => {
   const songEnd = musicPlayer.value.song == undefined ? 1600 : musicPlayer.value.song.repeatEnd
 
   musicPlayer.value.pause()
-  musicPlay.querySelector(".playerbtn-icon").style.backgroundPosition = "-48px 0";
   hScroll = songEnd
+  
+  const icon = musicPlay.querySelector<HTMLSpanElement>(".playerbtn-icon");
+  if (icon != undefined) icon.style.backgroundPosition = "-48px 0";
 })
 
 if (musicStart != undefined) musicStart.addEventListener("click", e => {
   e.preventDefault()
 
   musicPlayer.value.pause()
-  musicPlay.querySelector(".playerbtn-icon").style.backgroundPosition = "-48px 0";
   hScroll = 0
+  
+  const icon = musicPlay.querySelector<HTMLSpanElement>(".playerbtn-icon");
+  if (icon != undefined) icon.style.backgroundPosition = "-48px 0";
 })
 
 function moveHorz(cmd: number): void {
