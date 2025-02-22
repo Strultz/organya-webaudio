@@ -36,7 +36,7 @@ canvas {
   background-color: #E5F3FF;
   outline: 1px solid #CCE8FF;
 }
-.buttonrow-button:active {
+.buttonrow-button:active, .buttonrow-button-pushed {
   background-color: #CCE8FF;
   outline: 1px solid #99D1FF;
   padding: 3px 2px 0 4px;
