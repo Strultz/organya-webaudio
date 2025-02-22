@@ -2,27 +2,30 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Organya WebAudio</title>
+    <title>Organya Player</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="style.css">
     <script type="module" src="main.ts"></script>
   </head>
   <body>
     <div id="loading">Loading...</div>
     <div id="player" style="display: none">
-      <canvas id="organya-canvas" width="800" height="600">Rendering is not supported.</canvas>
       <input type="file" id="music-file" accept=".org">
       
-      <button type="button" id="music-start">|&lt;</button>
-      <button type="button" id="music-last-meas">&lt;&lt;</button>
-      <button type="button" id="music-last">&lt;</button>
+      <div class="buttonrow" id="player-buttonrow">
+          <button type="button" class="buttonrow-button" id="music-start"><span style="background-position: 0 0;" class="playerbtn-icon"></span></button>
+          <button type="button" class="buttonrow-button" id="music-last-meas"><span style="background-position: -16px 0;" class="playerbtn-icon"></span></button>
+          <button type="button" class="buttonrow-button" id="music-last"><span style="background-position: -32px 0;" class="playerbtn-icon"></span></button>
+          
+          <button type="button" class="buttonrow-button" id="music-play"><span style="background-position: -48px 0;" class="playerbtn-icon"></span></button>
+          
+          <button type="button" class="buttonrow-button" id="music-next" ><span style="background-position: -80px 0;" class="playerbtn-icon"></span></button>
+          <button type="button" class="buttonrow-button" id="music-next-meas"><span style="background-position: -96px 0;" class="playerbtn-icon"></span></button>
+          <button type="button" class="buttonrow-button" id="music-end"><span style="background-position: -112px 0;" class="playerbtn-icon"></span></button>
+      </div>
       
-      <button type="button" id="music-play">Play</button>
-      <button type="button" id="music-stop">Pause</button>
-      
-      <button type="button" id="music-next">&gt;</button>
-      <button type="button" id="music-next-meas">&gt;&gt;</button>
-      <button type="button" id="music-end">&gt;|</button>
+      <canvas id="organya-canvas" width="800" height="600" style="height: 600px;">Rendering is not supported.</canvas>
     </div>
   </body>
 </html>
