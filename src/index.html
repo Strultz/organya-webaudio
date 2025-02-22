@@ -43,11 +43,11 @@
         }, false);
 
         document.addEventListener('dragover', (event) => {
-            e.preventDefault();
+            event.preventDefault();
         });
         document.addEventListener('drop', (event) => {
-            document.getElementById('music-file').files = e.dataTransfer.files;
-            e.preventDefault();
+            document.getElementById('music-file').files = event.dataTransfer.files;
+            event.preventDefault();
         });
       </script>
     </div>
