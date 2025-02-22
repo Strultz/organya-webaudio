@@ -283,7 +283,7 @@ if (canvas != undefined) {
       
       const x = 64 + (note.start - hScroll) * noteWidth;
       const y = (95 - note.pitch - vScroll) * 12
-      if (x > canvas.width) return
+      if ((note.start + note.duration - 1 - hScroll) * noteWidth < 0 || x > canvas.width) return
       if (y < 0 || y >= canvas.height - 144) return
       
       let txx = 176 + (track % 2) * noteWidth
