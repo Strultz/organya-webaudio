@@ -1,3 +1,42 @@
 body {
-  /* wait */
+  color: #fffff7;
+  background-color: #1F2425;
+}
+
+.buttonrow {
+    padding-left: 2px;
+    overflow: hidden;
+    background: #fff;
+    height: 21px;
+    user-select: none;
+    font-size: 0;
+    border-bottom: 1px solid #DCDCDC;
+}
+.buttonrow-button {
+    width: 22px;
+    height: 19px;
+    margin: 1px;
+    border: 0;
+    padding: 2px 3px 1px 3px;
+    box-sizing: border-box;
+    vertical-align: top;
+    background: #FFF;
+}
+.playerbtn-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: url("./images/player.png");
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+}
+.buttonrow-button:hover, .buttonrow-button:focus-visible {
+    background-color: #E5F3FF;
+    outline: 1px solid #CCE8FF;
+}
+.buttonrow-button:active {
+    background-color: #CCE8FF;
+    outline: 1px solid #99D1FF;
+    padding: 3px 2px 0 4px;
 }
