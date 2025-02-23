@@ -384,9 +384,9 @@ if (canvas != undefined) {
       let digits = 3
       let max = 1000
       while (meas >= max) {
-  			max *= 10
-  			++digits
-  		}
+        max *= 10
+        ++digits
+      }
 
       for (let j = 0; j < digits; ++j) {
         max = ~~(max / 10)
