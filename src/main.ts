@@ -295,7 +295,7 @@ if (canvas != undefined) {
       
       const x = 64 + (note.start - hScroll) * noteWidth;
       const y = (95 - note.pitch - vScroll) * 12
-      if ((note.start + note.duration - 1 - hScroll) * noteWidth < 0 || x > canvas.width) return
+      if ((note.start + note.duration - 1 - hScroll) * noteWidth < 0 || x >= canvas.width) return
       if (y < 0 || y >= canvas.height - 144) return
       
       let txx = 176 + (track % 2) * noteWidth
@@ -375,33 +375,31 @@ if (canvas != undefined) {
     
     for (let i = hScroll - 4; i < ~~(canvas.width / 16) + hScroll; i++) {
       if (i % (songLine * songDot) != 0) continue
-      let x = 64 + i * noteWidth - hScroll * noteWidth
-      if (x < 0 || x >= canvas.width) break
+      const x = 64 + i * noteWidth - hScroll * noteWidth
+      if (x >= canvas.width) break
       
-      let meas = ~~(i / (songLine * songDot))
-      let k1000 = 0
-      let k100 = 0
-      let k10 = 0
-      while (meas >= 1000) {
-        k1000++
-        meas -= 1000
+      const meas = ~~(i / (songLine * songDot))
+      if (meas < 0 || meas > 0x7FFFFFFF) break
+
+      let digits = 3
+      let max = 1000
+      while (meas >= max) {
+  			max *= 10
+  			++digits
+  		}
+
+      for (let j = 0; j < digits; ++j) {
+        max = ~~(max / 10)
+			  const num = ~~(meas / max)
+
+        const newX = x + j * 8
+        if (newX < 0 || newX >= canvas.width) break
+
+        context.drawImage(orgTex, 176 + (num * 8), 136, 8, 12, newX, 0, 8, 12)
+        if (canvas.height > 550) {
+          context.drawImage(orgTex, 176 + (num * 8), 136, 8, 12, newX, canvas.height - 172, 8, 12)
+        }
       }
-      while (meas >= 100) {
-        k100++
-        meas -= 100
-      }
-      while (meas >= 10) {
-        k10++
-        meas -= 10
-      }
-      
-      if (k1000 > 0) {
-        context.drawImage(orgTex, 176 + (k1000 * 8), 136, 8, 12, x + 0, 0, 8, 12)
-        x += 8
-      }
-      context.drawImage(orgTex, 176 + (k100 * 8), 136, 8, 12, x + 0, 0, 8, 12)
-      context.drawImage(orgTex, 176 + (k10 * 8), 136, 8, 12, x + 8, 0, 8, 12)
-      context.drawImage(orgTex, 176 + (meas * 8), 136, 8, 12, x + 16, 0, 8, 12)
     }
     
     for (let i = 0; i < 8; i++) {
@@ -429,7 +427,7 @@ if (canvas != undefined) {
     if (song != undefined) {
       song.tracks[curTrack]!.notes.forEach((note) => {
         const x = 64 + (note.start - hScroll) * noteWidth;
-        if (x < 64 || x > canvas.width) return
+        if (x < 64 || x >= canvas.width) return
         if (note.pan != 255) {
           context.drawImage(orgTex, 207, 0, noteWidth, 5, x, canvas.height - 81 - (note.pan * 5), noteWidth, 5)
         }
