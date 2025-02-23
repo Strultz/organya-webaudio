@@ -392,7 +392,7 @@ if (canvas != undefined) {
         max = ~~(max / 10)
 			  const num = ~~(meas / max)
 
-        const newX = x + j * 8
+        const newX = x + j * 8 + 1
         if (newX < 0 || newX >= canvas.width) break
 
         context.drawImage(orgTex, 176 + (num * 8), 136, 8, 12, newX, 0, 8, 12)
