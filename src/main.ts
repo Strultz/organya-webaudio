@@ -378,7 +378,7 @@ if (canvas != undefined) {
       const x = 64 + i * noteWidth - hScroll * noteWidth
       if (x >= canvas.width) break
       
-      const meas = ~~(i / (songLine * songDot))
+      let meas = ~~(i / (songLine * songDot))
       if (meas < 0 || meas > 0x7FFFFFFF) break
 
       let digits = 3
@@ -391,6 +391,7 @@ if (canvas != undefined) {
       for (let j = 0; j < digits; ++j) {
         max = ~~(max / 10)
 			  const num = ~~(meas / max)
+        meas -= num * max
 
         const newX = x + j * 8 + 1
         if (newX < 0 || newX >= canvas.width) break
