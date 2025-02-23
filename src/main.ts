@@ -367,10 +367,10 @@ if (canvas != undefined) {
     const rx = (songStart - hScroll) * 16 + 64;
     const ex = (songEnd - hScroll) * 16 + 64;
     if (rx >= 64 && rx < canvas.width) {
-      context.drawImage(orgTex, 176, 0, noteWidth, 144, rx, canvas.height - 144 - 11 - (canvas.height > 550 ? 12 : 0), noteWidth, 144)
+      context.drawImage(orgTex, 176, 0, noteWidth, 11, rx, canvas.height - 144 - 11 - (canvas.height > 550 ? 12 : 0), noteWidth, 11)
     }
     if (ex >= 64 && ex < canvas.width) {
-      context.drawImage(orgTex, 192, 0, noteWidth, 144, ex, canvas.height - 144 - 11 - (canvas.height > 550 ? 12 : 0), noteWidth, 144)
+      context.drawImage(orgTex, 192, 0, noteWidth, 11, ex, canvas.height - 144 - 11 - (canvas.height > 550 ? 12 : 0), noteWidth, 11)
     }
     
     for (let i = hScroll - 4; i < ~~(canvas.width / 16) + hScroll; i++) {
