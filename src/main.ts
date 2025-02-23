@@ -390,7 +390,7 @@ if (canvas != undefined) {
 
       for (let j = 0; j < digits; ++j) {
         max = ~~(max / 10)
-			  const num = ~~(meas / max)
+        const num = ~~(meas / max)
         meas -= num * max
 
         const newX = x + j * 8 + 1
